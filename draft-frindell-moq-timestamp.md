@@ -124,7 +124,7 @@ back (both using an arithmetic, sign-extending right shift):
 WIDTH is the bit width of the two's-complement representation of v (for example,
 64).  Values outside the range -2^63 to 2^63-1 cannot be represented.
 
-# Serialization and Negotiation {#serialization}
+# Property Handling and Encoding {#property-handling}
 
 The Properties defined in this document are serialized as Key-Value-Pairs
 {{MOQT}}.  The Track Properties are carried in the track related control
@@ -146,7 +146,7 @@ modify, or remove them.  A publisher MAY carry them in Immutable Properties
 Because the Properties defined here are interdependent, an endpoint that
 interprets any of them MUST implement all of them.
 
-# Track Properties {#time-base}
+# Track Properties {#track-properties}
 
 A Track that uses the timestamps defined in this document declares a Timescale
 ({{timescale}}) and, optionally, a Clock ID ({{clock-id}}) and Timestamp Origin
@@ -303,7 +303,7 @@ Track's clock ({{clock-id}}), t is c - timestamp_origin.
 The result is an estimate: it does not indicate whether the Location exists, and
 Objects that carry a correction might not be close to the estimate.
 
-## Publisher Restarts {#restarts}
+# Publisher Restarts {#restarts}
 
 Because Track Properties cannot change, a publisher that restarts and resumes
 publishing the same Track cannot revise its origin or re-anchor its mapping; it
