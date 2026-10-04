@@ -19,11 +19,11 @@
 # Change the file extension to match the format (.xml for XML, etc...)
 #
 ###
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
-category: info
+title: "Timestamp Properties for MOQT"
+abbrev: "moq-timestamp"
+category: std
 
-docname: draft-todo-yourname-protocol-latest
+docname: draft-frindell-moq-timestamp-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
