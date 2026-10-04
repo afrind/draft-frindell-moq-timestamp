@@ -107,7 +107,7 @@ All Property values in this document are encoded as variable-length integers
 
 ## Signed Integer Zig-Zag Encoding {#zig-zag}
 
-Signed values, such as the timestamp correction ({{object-timestamp}}) are
+Signed values, such as the timestamp correction ({{object-timestamp}}), are
 carried in a variable-length integer using a zig-zag mapping that keeps
 small-magnitude values short: non-negative and negative values are interleaved
 so that the encoded value grows with the magnitude, in the order 0, -1, 1, -2,
@@ -122,13 +122,13 @@ back (both using an arithmetic, sign-extending right shift):
 ~~~
 
 WIDTH is the bit width of the two's-complement representation of v (for example,
-64).  Values with magnitude greater than 2^63 cannot be represented.
+64).  Values outside the range -2^63 to 2^63-1 cannot be represented.
 
 # Serialization and Negotiation {#serialization}
 
 The Properties defined in this document are serialized as Key-Value-Pairs
-{{MOQT}}.  The Track Properties are carried in the track related control messages,
-and like all Track Properties they are fixed for the lifetime of the
+{{MOQT}}.  The Track Properties are carried in the track related control
+messages, and like all Track Properties they are fixed for the lifetime of the
 Track ({{MOQT}}).  The Object Property is carried in the Object header.
 
 Each Property defined here MUST appear at most once on a given Track or Object,
@@ -143,7 +143,7 @@ These Properties are set by the Original Publisher.  Relays MUST NOT add,
 modify, or remove them.  A publisher MAY carry them in Immutable Properties
 ({{MOQT}}), for example to enable end-to-end authentication of timing.
 
-Because the Properties defined here are interdependent an endpoint that
+Because the Properties defined here are interdependent, an endpoint that
 interprets any of them MUST implement all of them.
 
 # Track Properties {#time-base}
@@ -161,9 +161,9 @@ timestamps in the Track.  Common values are 1000 for millisecond resolution and
 example, a media Track might use its codec sample rate).
 
 There is no default Timescale, to avoid silent unit errors such as confusing
-milliseconds with microseconds.  A subscriber that receives Track or Object with
-other properties but no TIMESCALE, or a TIMESCALE value of 0 treats the Track as
-malformed.
+milliseconds with microseconds.  A subscriber that receives a Track or Object
+with other Properties defined in this document but no TIMESCALE, or a TIMESCALE
+value of 0, treats the Track as malformed.
 
 ## Clock ID {#clock-id}
 
@@ -215,7 +215,7 @@ TIMESTAMP_MAPPING is a Track Property that defines how to compute an Object's
 timestamp directly from its Group ID and Object ID, with no per-Object Property.
 It generalizes the common case of a Track with a regular Object cadence, which
 can be conveyed with no per-Object properties.  Drift from the cadence can be
-expressed using per-Object corrections, see {{#object-timestamp}}.
+expressed using per-Object corrections ({{object-timestamp}}).
 
 The property value is exactly four variable-length integers: a Base Group ID,
 and a Base Timestamp, Group Multiplier, and an Object Multiplier, all in ticks.
@@ -224,7 +224,7 @@ malformed.  An Object's mapped timestamp is a linear function of its Group ID
 and Object ID:
 
 ~~~
-  mapped_timestamp = timestamp_origin
+  mapped_timestamp = base_timestamp
                    + (group_id - base_group) * group_multiplier
                    + object_id * object_multiplier
 ~~~
@@ -245,13 +245,14 @@ identifiers:
   Group, giving the per-Object cadence, or 0 when every Object in a Group shares
   the Group's time.
 
-* The **Base Group** and **Timestamp Origin** anchor the mapping, so that a
+* The **Base Group** and **Base Timestamp** anchor the mapping, so that a
   publisher whose Group IDs do not start at 0 -- for example, one that begins
   numbering at a wall-clock value and increments by one -- can still use a fixed
   Group Multiplier.  Both are 0 when Group 0 starts at timestamp 0.
 
 A publisher can thus rely on the mapping for the regular majority of Objects and
-spend per-Object bytes only where an Object's timestamp differes from the schedule.
+spend per-Object bytes only where an Object's timestamp differs from the
+schedule.
 
 # Object Timestamp {#object-timestamp}
 
@@ -260,8 +261,8 @@ ticks of the Track's Timescale.  How its value is interpreted depends on whether
 the Track has a Timestamp Mapping ({{timestamp-mapping}}):
 
 * On a Track without a Timestamp Mapping, the value is the Object's timestamp,
-  relative to TIMESTAMP_BASE, encoded as an unsigned variable-length integer.  An
-  Object that does not carry OBJECT_TIMESTAMP has no timestamp.
+  encoded as an unsigned variable-length integer.  An Object that does not carry
+  OBJECT_TIMESTAMP has no timestamp.
 
 * On a Track with a Timestamp Mapping, the value is a signed correction to the
   Object's mapped timestamp, encoded using the zig-zag mapping in
@@ -279,8 +280,8 @@ The timestamp of an Object is computed only from Track Properties and
 properties on the Object itself, and not any other Object.  This allows for
 correct computation even when Objects are filtered or arrive out of order.
 
-If a subscriber computes Object's timestamp less than 0 or more than 2^64 - 1
-treats the track as malformed.
+If a subscriber computes an Object's timestamp that is less than 0 or greater
+than 2^64-1, it treats the Track as malformed.
 
 # Locating Objects by Time {#time-to-location}
 
@@ -300,14 +301,15 @@ If the Object Multiplier is 0, only the Group is estimated.  For a time c on the
 Track's clock ({{clock-id}}), t is c - timestamp_origin.
 
 The result is an estimate: it does not indicate whether the Location exists, and
-Objects that carry a correction might not be close to the estimate.  
+Objects that carry a correction might not be close to the estimate.
 
 ## Publisher Restarts {#restarts}
 
 Because Track Properties cannot change, a publisher that restarts and resumes
 publishing the same Track cannot revise its origin or re-anchor its mapping; it
-MUST reuse already establishied Track Properties.  A publisher that might restart
-SHOULD choose Properties that remain valid and compress well across a restart.
+MUST reuse already established Track Properties.  A publisher that might
+restart SHOULD choose Properties that remain valid and compress well across a
+restart.
 
 # Defining Additional Timestamps {#additional-timestamps}
 
@@ -315,8 +317,8 @@ Some applications need more than one timestamp per Object -- for example, a
 media mapping that distinguishes presentation time from decode time.  This
 document defines a single timestamp per Object; a specification that needs
 others can define them as additional Object Properties.  Such a specification
-SHOULD designate which of its timestamps is the Object's timestamp defined in this
-document, and SHOULD define each additional timestamp as follows:
+SHOULD designate which of its timestamps is the Object's timestamp defined in
+this document, and SHOULD define each additional timestamp as follows:
 
 * Its value is a signed offset from the Object's timestamp, encoded using the
   zig-zag mapping in {{zig-zag}}:
