@@ -2,10 +2,11 @@
 
 
 
-WG Working Group                                              Y. N. Here
-Internet-Draft                                    Your Organization Here
-Intended status: Standards Track                          4 October 2026
-Expires: 7 April 2027
+Media Over QUIC                                              A. Frindell
+Internet-Draft                                                      Meta
+Intended status: Standards Track                                I. Swett
+Expires: 7 April 2027                                             Google
+                                                          4 October 2026
 
 
                      Timestamp Properties for MOQT
@@ -13,23 +14,36 @@ Expires: 7 April 2027
 
 Abstract
 
-   TODO Abstract
+   This document defines a small set of MOQT Properties for carrying
+   per-Object timestamps efficiently.  A Track declares a Timescale and,
+   optionally, a Clock ID and Timestamp Origin that place its timeline
+   on wall-clock time or on a clock shared with other Tracks.  An Object
+   then takes its timestamp from a single Object Property: an explicit
+   value or, on a Track with a Timestamp Mapping that derives timestamps
+   from Group ID and Object ID, a small signed correction to the mapped
+   value.  Objects that match the mapping carry no per-Object overhead.
+   This document also describes how other specifications can define
+   additional timestamps for an Object.  It defines only how timestamps
+   are represented and compressed; it does not define what instant a
+   timestamp denotes or prescribe how endpoints use them.
 
 About This Document
 
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://example.com/LATEST.  Status information for this document may
-   be found at https://datatracker.ietf.org/doc/draft-frindell-moq-
+   https://afrind.github.io/draft-frindell-moq-timestamp/draft-frindell-
+   moq-timestamp.html.  Status information for this document may be
+   found at https://datatracker.ietf.org/doc/draft-frindell-moq-
    timestamp/.
 
-   Discussion of this document takes place on the WG Working Group
-   mailing list (mailto:WG@example.com), which is archived at
-   https://example.com/WG.
+   Discussion of this document takes place on the Media Over QUIC
+   Working Group mailing list (mailto:moq@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/moq/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/moq/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/USER/REPO.
+   https://github.com/afrind/draft-frindell-moq-timestamp.
 
 Status of This Memo
 
@@ -65,16 +79,94 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
+     1.1.  Relationship to Other Specifications
    2.  Conventions and Definitions
-   3.  Security Considerations
-   4.  IANA Considerations
-   5.  Normative References
+   3.  Serialization and Negotiation
+   4.  Time Base Track Properties
+     4.1.  Timescale
+     4.2.  Clock ID
+     4.3.  Timestamp Origin
+   5.  Object Timestamp
+     5.1.  Self-Contained Timing
+   6.  Implicit Timestamp Mapping
+     6.1.  Locating Objects by Time
+     6.2.  Publisher Restarts
+   7.  Defining Additional Timestamps
+   8.  IANA Considerations
+     8.1.  TIMESCALE Property
+     8.2.  CLOCK_ID Property
+     8.3.  TIMESTAMP_ORIGIN Property
+     8.4.  TIMESTAMP_MAPPING Property
+     8.5.  OBJECT_TIMESTAMP Property
+   9.  Security Considerations
+   10. References
+     10.1.  Normative References
+     10.2.  Informative References
+   Appendix A.  Examples
+     A.1.  Fixed Cadence
+     A.2.  Explicit Timestamps
+     A.3.  Group IDs as Timestamps
+     A.4.  Timeline Template
+     A.5.  Shared Clock Without Wall-Clock Time
    Acknowledgments
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
-   TODO Introduction
+   Media over QUIC Transport (MOQT) [MOQT] delivers content as a
+   sequence of Objects within a Track.  Many applications need to
+   associate each Object with a time: a presentation or capture time for
+   media samples, a sample time for sensor data, or a logical timestamp
+   for ordering.  MOQT does not define a general-purpose Object
+   timestamp, so applications carry timing in the Object payload or in
+   application-specific Properties.  This prevents Relays and generic
+   tooling from reasoning about Object timing -- for example, measuring
+   an Object's age or the delay accumulated across a path -- without
+   parsing the media format.
+
+   This document fills that gap with a minimal, general representation.
+   It focuses solely on how a timestamp is expressed and encoded.  It
+   does not define which instant a timestamp denotes -- for example
+   capture, presentation, or decode time; specifications that reference
+   this document, such as media mappings, define that.  It also does not
+   define how a Relay or subscriber acts on a timestamp (scheduling,
+   expiry, and synchronization across Tracks are out of scope), Object
+   duration, or how publishers synchronize their clocks.
+
+   The design has three goals:
+
+   *  *Common base*: A Track declares its time base once, so Objects do
+      not repeat it.
+
+   *  *Compact encoding*: Per-Object timestamps are small integers,
+      expressible either as an explicit value or as a small signed
+      correction to the implicit mapped value.
+
+   *  *Implicit timing*: A Track can define a mapping from Group ID and
+      Object ID to a timestamp, conveying timing with no per-Object
+      bytes at all.
+
+1.1.  Relationship to Other Specifications
+
+   Several specifications already carry timing for MOQT Objects.  The
+   Low Overhead Media Container [LOC] defines Timestamp and Timescale
+   Properties for media carried in LOC.  [TIMESTAMP-LCURLEY] specifies
+   transport-level use of those same LOC Properties so that Relays can
+   make age-based decisions.  The MOQT Streaming Format [MSF] relates
+   media time, wall-clock time, and Location through catalog fields and
+   timeline tracks, including a template for regular cadences, and
+   numbers Groups by capture time in its log and metrics tracks.
+
+   This document aims to provide a single, general representation that
+   these and other specifications can reference.  It uses its own code
+   points rather than redefining those registered by [LOC].  Its
+   Timescale and Object Timestamp can express the same values as the LOC
+   Properties: a Clock ID of 0 (Section 4.2) with the default origin
+   gives timestamps counted from the Unix epoch, matching LOC's default
+   interpretation, and a Track with no Clock ID corresponds to LOC's use
+   of a Timescale without a defined anchor.  Its Timestamp Mapping can
+   express MSF's timeline template.  Appendix A illustrates these
+   correspondences.
 
 2.  Conventions and Definitions
 
@@ -84,15 +176,411 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Security Considerations
+   This document uses the terms Track, Object, Group, and Subgroup as
+   defined in [MOQT].  A "tick" is one unit of the Track's Timescale
+   (see Section 4.1).
 
-   TODO Security
+   All Property values in this document are encoded as variable-length
+   integers ([MOQT]) unless otherwise noted.
 
-4.  IANA Considerations
+   Signed values, such as the timestamp correction (Section 5) and
+   additional timestamps (Section 7), are carried in a variable-length
+   integer using a zig-zag mapping that keeps small-magnitude values
+   short: non-negative and negative values are interleaved so that the
+   encoded value grows with the magnitude, in the order 0, -1, 1, -2, 2,
+   ...
 
-   This document has no IANA actions.
+   To encode a signed value v as the variable-length integer u, and to
+   decode it back (both using an arithmetic, sign-extending right
+   shift):
 
-5.  Normative References
+     u = (v << 1) ^ (v >> (WIDTH - 1))     ; encode
+     v = (u >> 1) ^ -(u & 1)               ; decode
+
+   WIDTH is the bit width of the two's-complement representation of v
+   (for example, 64).  The encoded value u MUST fit in a 64-bit
+   variable-length integer, which holds any value whose magnitude is
+   less than 2^63 ticks.
+
+3.  Serialization and Negotiation
+
+   The Properties defined in this document are serialized as Key-Value-
+   Pairs [MOQT].  The Track Properties are carried in the messages that
+   carry Track Properties, and like all Track Properties they are fixed
+   for the lifetime of the Track ([MOQT]).  The Object Property is
+   carried in the Object header.
+
+   Each Property defined here MUST appear at most once on a given Track
+   or Object, counting both the mutable list and Immutable Properties
+   ([MOQT]), and MUST appear only in its defined scope: OBJECT_TIMESTAMP
+   MUST NOT appear as a Track Property, and the Track Properties
+   (TIMESCALE, CLOCK_ID, TIMESTAMP_ORIGIN, TIMESTAMP_MAPPING) MUST NOT
+   appear as Object Properties.
+
+   These Properties are set by the Original Publisher.  Relays MUST NOT
+   add, modify, or remove them.  A publisher MAY carry them in Immutable
+   Properties ([MOQT]), for example to enable end-to-end authentication
+   of timing.
+
+   A Track that violates any requirement in this document on the
+   presence, scope, or value of these Properties is malformed, and the
+   receiver handles it as specified in [MOQT].
+
+   Because these Properties are interdependent -- every timestamp needs
+   TIMESCALE, TIMESTAMP_ORIGIN is interpreted according to CLOCK_ID, and
+   OBJECT_TIMESTAMP is interpreted according to TIMESTAMP_MAPPING -- an
+   endpoint that interprets any of them MUST implement all of them.
+
+4.  Time Base Track Properties
+
+   A Track that uses the timestamps defined in this document declares a
+   Timescale (Section 4.1) and, optionally, a Clock ID (Section 4.2) and
+   Timestamp Origin (Section 4.3) that place its timeline on a clock.
+   All Object timestamps in the Track are interpreted against this base.
+
+4.1.  Timescale
+
+   TIMESCALE is a Track Property giving the number of ticks per second
+   used by all timestamps in the Track.  Common values are 1000 for
+   millisecond resolution and 1000000 for microsecond resolution, but
+   any positive value MAY be used (for example, a media Track might use
+   its codec sample rate).
+
+   There is no default Timescale, to avoid silent unit errors such as
+   confusing milliseconds with microseconds.  A Track MUST carry
+   TIMESCALE if it carries any other Property defined in this document,
+   or if any of its Objects carries OBJECT_TIMESTAMP.  A TIMESCALE of 0
+   is malformed.
+
+4.2.  Clock ID
+
+   CLOCK_ID is a Track Property identifying the clock on which the
+   Track's timeline is placed:
+
+   *  A CLOCK_ID of 0 identifies wall-clock time, measured as POSIX time
+      (seconds since 1970-01-01T00:00:00Z, excluding leap seconds) and
+      expressed in ticks.
+
+   *  A non-zero CLOCK_ID identifies a clock with no defined
+      relationship to wall-clock time.  Tracks that carry the same non-
+      zero CLOCK_ID share that clock, so their timestamps can be
+      compared -- for example, the audio and video Tracks of an on-
+      demand asset.
+
+   *  If CLOCK_ID is absent, the Track's timeline is not placed on any
+      clock: its timestamps are meaningful only relative to one another
+      within the Track.
+
+   A non-zero CLOCK_ID identifies the same clock wherever it appears, so
+   values chosen independently by different publishers can collide.  A
+   publisher SHOULD choose values from a large space (at least 62 bits)
+   in a way that makes accidental collisions negligible without
+   coordination.  A value can be random, or derived deterministically --
+   for example, by hashing a stable identifier for the content -- so
+   that separate encoders, or a publisher that restarts, arrive at the
+   same value for the same clock.
+
+4.3.  Timestamp Origin
+
+   TIMESTAMP_ORIGIN is a Track Property giving the position, in ticks on
+   the Track's clock (Section 4.2), that corresponds to a timestamp of
+   0.  An Object's time on that clock is:
+
+     clock_time = timestamp_origin + object_timestamp
+
+   For a CLOCK_ID of 0, clock_time is the Object's wall-clock time in
+   ticks since the Unix epoch.  For a non-zero CLOCK_ID, the origin
+   gives the Track's offset on the shared clock, so Tracks that start at
+   different points on that clock can still be compared.  Because each
+   Track's origin and timestamps are counted in its own ticks, Tracks
+   with different Timescales are compared by converting clock_time to
+   seconds.
+
+   If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that
+   carries TIMESTAMP_ORIGIN without CLOCK_ID is malformed.
+
+   Carrying the origin once per Track keeps per-Object timestamps small:
+   a publisher can start its timeline near 0 and convey the clock time
+   in the origin rather than in every Object.
+
+   Because the origin is counted in ticks, it places the timeline on the
+   clock only to the nearest tick: at a TIMESCALE of 30, for example, to
+   within 1/30 of a second.  A publisher that needs both a coarse
+   cadence and a precise origin chooses a TIMESCALE that represents both
+   exactly -- for example, 30000 for 30 or 30000/1001 Objects per second
+   with a millisecond-precision origin.
+
+   The origin is a single fixed offset; it does not account for drift
+   between the clock that produces a Track's timestamps and the clock
+   identified by CLOCK_ID.  This document places no requirement on the
+   accuracy or synchronization of publishers' clocks, so Tracks on the
+   same clock can be compared only to the accuracy of the clocks that
+   produced them.
+
+5.  Object Timestamp
+
+   OBJECT_TIMESTAMP is an Object Property that conveys the Object's
+   timestamp, in ticks of the Track's Timescale.  How its value is
+   interpreted depends on whether the Track has a Timestamp Mapping
+   (Section 6):
+
+   *  On a Track without a Timestamp Mapping, the value is the Object's
+      timestamp, encoded as an unsigned variable-length integer.  An
+      Object that does not carry OBJECT_TIMESTAMP has no timestamp.
+
+   *  On a Track with a Timestamp Mapping, the value is a signed
+      correction to the Object's mapped timestamp, encoded using the
+      zig-zag mapping in Section 2.  An Object that does not carry
+      OBJECT_TIMESTAMP takes its mapped timestamp:
+
+        object_timestamp = mapped_timestamp + correction
+
+   The Object's timestamp (object_timestamp in the formulas in this
+   document) is the value resolved by these rules.  Because a Track's
+   Properties are known before any of its Objects, a receiver always
+   knows which rule applies.
+
+   A correction can express any timestamp, so on a Track with a mapping,
+   Objects that follow the cadence carry nothing, Objects that deviate
+   slightly carry a small correction, and an Object far from its mapped
+   timestamp -- for example, one sent out of timestamp order -- carries
+   a larger one.  Because a deviation is small regardless of how long
+   the Track has been running, a correction stays compact where an
+   absolute value would grow.
+
+   An Object's timestamp MUST be non-negative, and it and its sum with
+   TIMESTAMP_ORIGIN MUST be less than 2^64.
+
+   This document does not define how a receiver treats an Object that
+   has no timestamp; specifications that act on timestamps are expected
+   to define that behavior.
+
+5.1.  Self-Contained Timing
+
+   Every timestamp in this document is self-contained: it is computed
+   only from the Object's own Group ID, Object ID, and Object Properties
+   and the Track's Properties, never from any other Object.  Timing
+   therefore resolves identically for Objects with Subgroup and Datagram
+   Forwarding Preferences, and remains correct when Objects are lost or
+   reordered.
+
+6.  Implicit Timestamp Mapping
+
+   TIMESTAMP_MAPPING is a Track Property that defines how to compute an
+   Object's timestamp directly from its Group ID and Object ID, with no
+   per-Object Property.  It generalizes the common case of a Track with
+   a regular Object cadence, and its presence makes OBJECT_TIMESTAMP a
+   correction to the mapped value (Section 5).
+
+   The value is exactly four variable-length integers: a Base Group, a
+   Base Timestamp (in ticks), a Group Multiplier (in ticks), and an
+   Object Multiplier (in ticks).  A value that does not parse as exactly
+   four variable-length integers is malformed.  An Object's mapped
+   timestamp is a linear function of its Group ID and Object ID:
+
+     mapped_timestamp = base_timestamp
+                      + (group_id - base_group) * group_multiplier
+                      + object_id * object_multiplier
+
+   The computation uses signed arithmetic, so it applies to every Group,
+   including Groups before the Base Group.  A negative mapped_timestamp
+   is valid only if a correction brings the Object's timestamp to a non-
+   negative value.
+
+   The publisher chooses the values from the meaning it gives its
+   identifiers:
+
+   *  The *Group Multiplier* converts a Group ID into the Group's start
+      time.  Set it to 1 when Group IDs are themselves timestamps in
+      ticks, so each Group is placed directly by its ID; or to the
+      number of ticks per Group when Group IDs are sequential indices
+      and Groups have a fixed duration.
+
+   *  The *Object Multiplier* converts an Object ID into an offset
+      within its Group, giving the per-Object cadence, or 0 when every
+      Object in a Group shares the Group's time.
+
+   *  The *Base Group* and *Base Timestamp* anchor the mapping, so that
+      a publisher whose Group IDs do not start at 0 -- for example, one
+      that begins numbering at a wall-clock value and increments by one
+      -- can still use a fixed Group Multiplier.  Both are 0 when Group
+      0 starts at timestamp 0.
+
+   A publisher can thus rely on the mapping for the regular majority of
+   Objects and spend per-Object bytes only where reality departs from
+   the schedule.
+
+   All mapping values are integers.  A cadence that is not an integer
+   number of ticks at a convenient Timescale is still exactly
+   representable by choosing TIMESCALE accordingly: for 30000/1001
+   Objects per second, a publisher sets TIMESCALE to 30000 and the
+   Object Multiplier to 1001.
+
+6.1.  Locating Objects by Time
+
+   When a Track has a Timestamp Mapping with a non-zero Group
+   Multiplier, a receiver can estimate the Location of the Object with a
+   given timestamp t without receiving any Object:
+
+     group_id  = base_group
+               + floor((t - base_timestamp) / group_multiplier)
+     object_id = floor((t - base_timestamp
+                        - (group_id - base_group) * group_multiplier)
+                       / object_multiplier)
+
+   If the Object Multiplier is 0, only the Group is estimated.  For a
+   time c on the Track's clock (Section 4.2), t is c - timestamp_origin.
+
+   The result is an estimate: it does not indicate whether the Location
+   exists, and Objects that carry a correction lie near their mapped
+   timestamp if the correction is small, or anywhere if it is large.  A
+   receiver can use it, for example, to choose the start of a
+   subscription or fetch by time.
+
+6.2.  Publisher Restarts
+
+   Because Track Properties cannot change, a publisher that restarts
+   without persisted state cannot revise its origin or re-anchor its
+   mapping.  A publisher that might restart SHOULD choose Properties
+   that remain valid across a restart -- for example, a CLOCK_ID of 0
+   with the default origin and Group IDs that are themselves wall-clock
+   ticks, used with a Group Multiplier of 1.  Otherwise, it SHOULD carry
+   a correction in OBJECT_TIMESTAMP on every Object the mapping would
+   misplace.
+
+7.  Defining Additional Timestamps
+
+   Some applications need more than one timestamp per Object -- for
+   example, a media mapping that distinguishes presentation time from
+   decode time.  This document defines a single timestamp per Object; a
+   specification that needs others can define them as additional Object
+   Properties.  Such a specification MUST designate which of its
+   timestamps is the Object's timestamp defined in this document, and
+   SHOULD define each additional timestamp as follows:
+
+   *  Its value is a signed offset from the Object's timestamp, encoded
+      using the zig-zag mapping in Section 2:
+
+        additional_timestamp = object_timestamp + offset
+
+   *  The offset is counted in ticks of the Track's Timescale, and the
+      additional timestamp is on the same clock, with the same origin,
+      as the Object's timestamp.
+
+   *  An Object that carries the offset but has no timestamp
+      (Section 5), or an offset whose result would be negative, is
+      malformed.
+
+   *  The specification defines the value used when the offset is
+      absent; a default of 0, meaning the additional timestamp equals
+      the Object's timestamp, keeps the common case free of per-Object
+      bytes.
+
+   Like a correction, such an offset stays small however long the Track
+   has run, and it is self-contained (Section 5.1).
+
+8.  IANA Considerations
+
+   This document registers the following entries in the "MOQ Properties"
+   registry established by [MOQT].  The code points below are
+   provisional values for interoperability testing; final values are to
+   be assigned by IANA.  The Object Property uses a short (two-byte)
+   code point because it is sent per Object.
+
+8.1.  TIMESCALE Property
+
+      +============+===========+=======+============================+
+      |       Type | Name      | Scope | Specification              |
+      +============+===========+=======+============================+
+      | 0x2C7A51E0 | TIMESCALE | Track | This document, Section 4.1 |
+      +------------+-----------+-------+----------------------------+
+
+                                  Table 1
+
+   The value is a variable-length integer giving ticks per second.
+
+8.2.  CLOCK_ID Property
+
+      +============+==========+=======+============================+
+      |       Type | Name     | Scope | Specification              |
+      +============+==========+=======+============================+
+      | 0x3E8D2B70 | CLOCK_ID | Track | This document, Section 4.2 |
+      +------------+----------+-------+----------------------------+
+
+                                 Table 2
+
+   The value is a variable-length integer identifying the Track's clock;
+   0 identifies wall-clock time, and other values identify shared
+   clocks.
+
+8.3.  TIMESTAMP_ORIGIN Property
+
+        +============+==================+=======+================+
+        |       Type | Name             | Scope | Specification  |
+        +============+==================+=======+================+
+        | 0x31B49A6E | TIMESTAMP_ORIGIN | Track | This document, |
+        |            |                  |       | Section 4.3    |
+        +------------+------------------+-------+----------------+
+
+                                 Table 3
+
+   The value is a variable-length integer giving the position, in ticks
+   on the Track's clock, that corresponds to a timestamp of 0.
+
+8.4.  TIMESTAMP_MAPPING Property
+
+   +============+===================+=======+==========================+
+   |       Type | Name              | Scope | Specification            |
+   +============+===================+=======+==========================+
+   | 0x27F308C5 | TIMESTAMP_MAPPING | Track | This document,           |
+   |            |                   |       | Section 6                |
+   +------------+-------------------+-------+--------------------------+
+
+                                  Table 4
+
+   The value is four variable-length integers: a Base Group, and a Base
+   Timestamp, Group Multiplier, and Object Multiplier, each in ticks.
+
+8.5.  OBJECT_TIMESTAMP Property
+
+     +========+==================+========+==========================+
+     |   Type | Name             | Scope  | Specification            |
+     +========+==================+========+==========================+
+     | 0x2D1A | OBJECT_TIMESTAMP | Object | This document, Section 5 |
+     +--------+------------------+--------+--------------------------+
+
+                                  Table 5
+
+   The value is a variable-length integer giving the Object's timestamp
+   in ticks or, on a Track with a Timestamp Mapping, a zig-zag encoded
+   correction to the Object's mapped timestamp.
+
+9.  Security Considerations
+
+   Timestamps are supplied by the publisher and are not authenticated by
+   the transport.  An endpoint that acts on timestamps (for buffering,
+   ordering, or expiry) SHOULD treat them as hints and apply its own
+   sanity checks, since a misbehaving publisher can send misleading
+   values.
+
+   Timestamps and the Timestamp Origin can reveal information about the
+   publisher's clock and the temporal structure of its content.  Where
+   this is sensitive, a publisher MAY omit CLOCK_ID (and hence the
+   origin), use a coarser Timescale, or omit these Properties.  An end-
+   to-end encrypted payload can carry timing that is hidden from Relays,
+   but when a Timestamp Mapping is in use, Group IDs and Object IDs
+   reveal timing regardless.  See [MOQT] for general considerations on
+   logging untrusted Property values.
+
+10.  References
+
+10.1.  Normative References
+
+   [MOQT]     Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
+              "Media over QUIC Transport", Work in Progress, Internet-
+              Draft, draft-ietf-moq-transport-22, 1 October 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
+              transport-22>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -103,12 +591,119 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
+10.2.  Informative References
+
+   [LOC]      Zanaty, M., Nandakumar, S., and P. Thatcher, "Low Overhead
+              Media Container", Work in Progress, Internet-Draft, draft-
+              ietf-moq-loc-04, 20 July 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-
+              04>.
+
+   [MSF]      Law, W. and S. Nandakumar, "MOQT Streaming Format", Work
+              in Progress, Internet-Draft, draft-ietf-moq-msf-01, 2 June
+              2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
+              moq-msf-01>.
+
+   [TIMESTAMP-LCURLEY]
+              Curley, L., "MoQ Object Timestamp Extension", Work in
+              Progress, Internet-Draft, draft-lcurley-moq-timestamp-01,
+              3 August 2026, <https://datatracker.ietf.org/doc/html/
+              draft-lcurley-moq-timestamp-01>.
+
+Appendix A.  Examples
+
+   The following examples show how common timing arrangements, including
+   those of the specifications in Section 1.1, are expressed with the
+   Properties in this document.
+
+A.1.  Fixed Cadence
+
+   A Track sends 30000/1001 Objects per second in Groups of 60 Objects,
+   with sequential Group IDs starting at 0, and the publisher knows the
+   wall-clock time W (in ticks since the Unix epoch) at which Group 0
+   starts:
+
+     TIMESCALE         = 30000
+     CLOCK_ID          = 0
+     TIMESTAMP_ORIGIN  = W
+     TIMESTAMP_MAPPING = (0, 0, 60060, 1001)
+
+   Objects on cadence carry no timestamp Property; an Object that
+   deviates from the cadence carries a small correction in
+   OBJECT_TIMESTAMP.
+
+A.2.  Explicit Timestamps
+
+   A Track whose Objects each carry a timestamp in microseconds since
+   the Unix epoch, as LOC does when no Timescale is present [LOC]:
+
+     TIMESCALE         = 1000000
+     CLOCK_ID          = 0
+
+   Each Object carries OBJECT_TIMESTAMP, and the origin takes its
+   default of 0.
+
+A.3.  Group IDs as Timestamps
+
+   A Track whose Group IDs are microseconds since the Unix epoch and
+   whose Objects share their Group's time, such as an MSF log track
+   [MSF]:
+
+     TIMESCALE         = 1000000
+     CLOCK_ID          = 0
+     TIMESTAMP_MAPPING = (0, 0, 1, 0)
+
+   Every Object's timestamp is its Group ID, with no per-Object bytes.
+
+A.4.  Timeline Template
+
+   An MSF timeline template [MSF] with a start media time M, start
+   Location (G, 0), Location delta (1, 0), and start wall-clock time W,
+   in which the media time and wall-clock deltas are both D, all in
+   milliseconds, is expressed as:
+
+     TIMESCALE         = 1000
+     CLOCK_ID          = 0
+     TIMESTAMP_ORIGIN  = W - M
+     TIMESTAMP_MAPPING = (G, M, D, 0)
+
+   This requires a known wall-clock time with W at least M.  For on-
+   demand content, where MSF sets the wall-clock values to 0, the
+   publisher omits CLOCK_ID and TIMESTAMP_ORIGIN, or uses a shared Clock
+   ID as in Appendix A.5.  The template describes only Group start
+   times; a publisher that also knows its per-Object cadence sets the
+   Object Multiplier accordingly.
+
+A.5.  Shared Clock Without Wall-Clock Time
+
+   The audio and video Tracks of an on-demand asset have no meaningful
+   wall-clock time but need to be aligned.  The publisher derives a
+   Clock ID for the asset, for example from a hash of its identifier;
+   both Tracks carry it and start at time 0 on that clock:
+
+     Video:  TIMESCALE = 90000, CLOCK_ID = 0x1A3F5C9E07B2D461
+     Audio:  TIMESCALE = 48000, CLOCK_ID = 0x1A3F5C9E07B2D461
+
+   A receiver aligns an audio Object and a video Object by comparing
+   their timestamps in seconds.
+
 Acknowledgments
 
-   TODO acknowledge.
+   The authors thank the authors of [LOC], [MSF], and
+   [TIMESTAMP-LCURLEY], whose timestamp work (Section 1.1) this document
+   builds on, and the participants in the MOQ working group discussions
+   that shaped it.
 
-Author's Address
+   Portions of this document were drafted with the assistance of Claude
+   (Claude Code, Anthropic).
 
-   Your Name Here
-   Your Organization Here
-   Email: your.email@example.com
+Authors' Addresses
+
+   Alan Frindell
+   Meta
+   Email: afrind@meta.com
+
+
+   Ian Swett
+   Google
+   Email: ianswett@google.com
