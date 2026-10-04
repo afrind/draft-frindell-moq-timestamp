@@ -555,14 +555,17 @@ A.1.  Fixed Cadence
 
 A.2.  Explicit Timestamps
 
-   A Track whose Objects each carry a timestamp in microseconds since
-   the Unix epoch, as LOC does when no Timescale is present [LOC]:
+   A Track whose Objects each carry a wall-clock timestamp in
+   microseconds, with its origin at 2026-01-01T00:00:00Z:
 
      TIMESCALE         = 1000000
      CLOCK_ID          = 0
+     TIMESTAMP_ORIGIN  = 1767225600000000
 
-   Each Object carries OBJECT_TIMESTAMP, and the origin takes its
-   default of 0.
+   Each Object carries OBJECT_TIMESTAMP, counted in microseconds since
+   the origin.  Omitting TIMESTAMP_ORIGIN instead gives microseconds
+   since the Unix epoch, as LOC does when no Timescale is present [LOC],
+   at the cost of larger values.
 
 A.3.  Group IDs as Timestamps
 

@@ -1866,15 +1866,18 @@ cadence carries a small correction in OBJECT_TIMESTAMP.<a href="#appendix-A.1-3"
         <h3 id="name-explicit-timestamps">
 <a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-explicit-timestamps" class="section-name selfRef">Explicit Timestamps</a>
         </h3>
-<p id="appendix-A.2-1">A Track whose Objects each carry a timestamp in microseconds since the Unix
-epoch, as LOC does when no Timescale is present <span>[<a href="#LOC" class="cite xref">LOC</a>]</span>:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-1">A Track whose Objects each carry a wall-clock timestamp in microseconds, with
+its origin at 2026-01-01T00:00:00Z:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="appendix-A.2-2">
 <pre>
   TIMESCALE         = 1000000
   CLOCK_ID          = 0
+  TIMESTAMP_ORIGIN  = 1767225600000000
 </pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
 </div>
-<p id="appendix-A.2-3">Each Object carries OBJECT_TIMESTAMP, and the origin takes its default of 0.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-3">Each Object carries OBJECT_TIMESTAMP, counted in microseconds since the origin.
+Omitting TIMESTAMP_ORIGIN instead gives microseconds since the Unix epoch, as
+LOC does when no Timescale is present <span>[<a href="#LOC" class="cite xref">LOC</a>]</span>, at the cost of larger values.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="group-ids-as-timestamps">
