@@ -74,7 +74,7 @@ Table of Contents
      1.1.  Relationship to Other Specifications
    2.  Conventions and Definitions
      2.1.  Signed Integer Zig-Zag Encoding
-   3.  Serialization and Negotiation
+   3.  Property Handling and Encoding
    4.  Track Properties
      4.1.  Timescale
      4.2.  Clock ID
@@ -82,18 +82,18 @@ Table of Contents
      4.4.  Timestamp Mapping
    5.  Object Timestamp
    6.  Locating Objects by Time
-     6.1.  Publisher Restarts
-   7.  Defining Additional Timestamps
-   8.  IANA Considerations
-     8.1.  TIMESCALE Property
-     8.2.  CLOCK_ID Property
-     8.3.  TIMESTAMP_ORIGIN Property
-     8.4.  TIMESTAMP_MAPPING Property
-     8.5.  OBJECT_TIMESTAMP Property
-   9.  Security Considerations
-   10. References
-     10.1.  Normative References
-     10.2.  Informative References
+   7.  Publisher Restarts
+   8.  Defining Additional Timestamps
+   9.  IANA Considerations
+     9.1.  TIMESCALE Property
+     9.2.  CLOCK_ID Property
+     9.3.  TIMESTAMP_ORIGIN Property
+     9.4.  TIMESTAMP_MAPPING Property
+     9.5.  OBJECT_TIMESTAMP Property
+   10. Security Considerations
+   11. References
+     11.1.  Normative References
+     11.2.  Informative References
    Appendix A.  Examples
      A.1.  Fixed Cadence
      A.2.  Explicit Timestamps
@@ -186,7 +186,7 @@ Table of Contents
    (for example, 64).  Values outside the range -2^63 to 2^63-1 cannot
    be represented.
 
-3.  Serialization and Negotiation
+3.  Property Handling and Encoding
 
    The Properties defined in this document are serialized as Key-Value-
    Pairs [MOQT].  The Track Properties are carried in the track related
@@ -373,7 +373,7 @@ Table of Contents
    exists, and Objects that carry a correction might not be close to the
    estimate.
 
-6.1.  Publisher Restarts
+7.  Publisher Restarts
 
    Because Track Properties cannot change, a publisher that restarts and
    resumes publishing the same Track cannot revise its origin or re-
@@ -381,7 +381,7 @@ Table of Contents
    Properties.  A publisher that might restart SHOULD choose Properties
    that remain valid and compress well across a restart.
 
-7.  Defining Additional Timestamps
+8.  Defining Additional Timestamps
 
    Some applications need more than one timestamp per Object -- for
    example, a media mapping that distinguishes presentation time from
@@ -400,7 +400,7 @@ Table of Contents
       additional timestamp is on the same clock, with the same origin,
       as the Object's timestamp.
 
-8.  IANA Considerations
+9.  IANA Considerations
 
    This document registers the following entries in the "MOQ Properties"
    registry established by [MOQT].  The code points below are
@@ -408,7 +408,7 @@ Table of Contents
    be assigned by IANA.  The Object Property uses a short (two-byte)
    code point because it is sent per Object.
 
-8.1.  TIMESCALE Property
+9.1.  TIMESCALE Property
 
       +============+===========+=======+============================+
       |       Type | Name      | Scope | Specification              |
@@ -420,7 +420,7 @@ Table of Contents
 
    The value is a variable-length integer giving ticks per second.
 
-8.2.  CLOCK_ID Property
+9.2.  CLOCK_ID Property
 
       +============+==========+=======+============================+
       |       Type | Name     | Scope | Specification              |
@@ -434,7 +434,7 @@ Table of Contents
    0 identifies wall-clock time, and other values identify shared
    clocks.
 
-8.3.  TIMESTAMP_ORIGIN Property
+9.3.  TIMESTAMP_ORIGIN Property
 
         +============+==================+=======+================+
         |       Type | Name             | Scope | Specification  |
@@ -448,7 +448,7 @@ Table of Contents
    The value is a variable-length integer giving the position, in ticks
    on the Track's clock, that corresponds to a timestamp of 0.
 
-8.4.  TIMESTAMP_MAPPING Property
+9.4.  TIMESTAMP_MAPPING Property
 
         +============+===================+=======+================+
         |       Type | Name              | Scope | Specification  |
@@ -462,7 +462,7 @@ Table of Contents
    The value is four variable-length integers: a Base Group, and a Base
    Timestamp, Group Multiplier, and Object Multiplier, each in ticks.
 
-8.5.  OBJECT_TIMESTAMP Property
+9.5.  OBJECT_TIMESTAMP Property
 
      +========+==================+========+==========================+
      |   Type | Name             | Scope  | Specification            |
@@ -476,7 +476,7 @@ Table of Contents
    in ticks or, on a Track with a Timestamp Mapping, a zig-zag encoded
    correction to the Object's mapped timestamp.
 
-9.  Security Considerations
+10.  Security Considerations
 
    Timestamps are supplied by the publisher and are not authenticated by
    the transport.  An endpoint that acts on timestamps (for buffering,
@@ -493,9 +493,9 @@ Table of Contents
    reveal timing regardless.  See [MOQT] for general considerations on
    logging untrusted Property values.
 
-10.  References
+11.  References
 
-10.1.  Normative References
+11.1.  Normative References
 
    [MOQT]     Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
               "Media over QUIC Transport", Work in Progress, Internet-
@@ -512,7 +512,7 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
-10.2.  Informative References
+11.2.  Informative References
 
    [LOC]      Zanaty, M., Nandakumar, S., and P. Thatcher, "Low Overhead
               Media Container", Work in Progress, Internet-Draft, draft-
