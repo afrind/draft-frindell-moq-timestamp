@@ -61,9 +61,9 @@ general-purpose Object timestamp, so applications carry timing in the Object
 payload or in application-specific Properties. This prevents Relays from using
 timestamps to measure and optimize delivery without parsing the media format.
 
-This document defines how a timestamp is encoded, with a primary goal of
-ensuring the transport has the information it needs to make optimal decisions,
-and secondarily as a Property different applications can use.  It does not define
+This document defines how a timestamp is encoded. Goals include
+ensuring the transport can make optimal decisions, visibility into latency,
+and as a Property different applications can use.  It does not define
 which instant a timestamp denotes -- for example capture, presentation, or decode
 time; specifications that reference this document, such as media mappings,
 define that.  It also does not define how a Relay or subscriber acts on a
