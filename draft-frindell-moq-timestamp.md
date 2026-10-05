@@ -127,9 +127,7 @@ WIDTH is the bit width of the two's-complement representation of v (for example,
 # Property Handling and Encoding {#property-handling}
 
 The Properties defined in this document are serialized as Key-Value-Pairs
-{{MOQT}}.  The Track Properties are carried in the track related control
-messages, and like all Track Properties they are fixed for the lifetime of the
-Track ({{MOQT}}).  The Object Property is carried in the Object header.
+{{MOQT}}.
 
 Each Property defined here MUST appear at most once on a given Track or Object,
 counting both the mutable list and Immutable Properties ({{MOQT}}), and MUST
@@ -151,7 +149,7 @@ interprets any of them MUST implement all of them.
 A Track that uses the timestamps defined in this document declares a Timescale
 ({{timescale}}) and, optionally, a Clock ID ({{clock-id}}) and Timestamp Origin
 ({{timestamp-origin}}) that place its timeline on a clock.  All Object
-timestamps in the Track are interpreted against this base.
+timestamps in the Track are interpreted against this clock.
 
 ## Timescale {#timescale}
 
@@ -161,7 +159,7 @@ timestamps in the Track.  Common values are 1000 for millisecond resolution and
 example, a media Track might use its codec sample rate).
 
 There is no default Timescale, to avoid silent unit errors such as confusing
-milliseconds with microseconds.  A subscriber that receives a Track or Object
+milliseconds with microseconds.  A subscriber that receives a Track 
 with other Properties defined in this document but no TIMESCALE, or a TIMESCALE
 value of 0, treats the Track as malformed.
 
@@ -205,20 +203,14 @@ with different Timescales are compared by converting clock_time to seconds.
 If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that carries
 TIMESTAMP_ORIGIN without CLOCK_ID is malformed.
 
-Carrying the origin once per Track keeps per-Object timestamps small: a
-publisher can start its timeline near 0 and convey the clock time as a delta
-from TIMESTAMP_ORIGIN in any Object.
-
 ## Timestamp Mapping {#timestamp-mapping}
 
 TIMESTAMP_MAPPING is a Track Property that defines how to compute an Object's
-timestamp directly from its Group ID and Object ID, with no per-Object Property.
-It generalizes the common case of a Track with a regular Object cadence, which
-can be conveyed with no per-Object properties.  Drift from the cadence can be
-expressed using per-Object corrections ({{object-timestamp}}).
+timestamp from its Group ID and Object ID, with no per-Object Property.
+Drift can be expressed with a property on any Object ({{object-timestamp}}).
 
 The property value is exactly four variable-length integers: a Base Group ID,
-and a Base Timestamp, Group Multiplier, and an Object Multiplier, all in ticks.
+a Base Timestamp, a Group Multiplier, and an Object Multiplier, all in ticks.
 A value that does not parse as exactly four variable-length integers is
 malformed.  An Object's mapped timestamp is a linear function of its Group ID
 and Object ID:
