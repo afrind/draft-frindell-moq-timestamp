@@ -291,23 +291,9 @@ restart.
 
 # Defining Additional Timestamps {#additional-timestamps}
 
-Some applications need more than one timestamp per Object -- for example, a
-media mapping that distinguishes presentation time from decode time.  This
-document defines a single timestamp per Object; a specification that needs
-others can define them as additional Object Properties.  Such a specification
-SHOULD designate which of its timestamps is the Object's timestamp defined in
-this document, and SHOULD define each additional timestamp as follows:
-
-* Its value is a signed offset from the Object's timestamp, encoded using the
-  zig-zag mapping in {{zig-zag}}:
-
-  ~~~
-    additional_timestamp = object_timestamp + offset
-  ~~~
-
-* The offset is counted in ticks of the Track's Timescale, and the additional
-  timestamp is on the same clock, with the same origin, as the Object's
-  timestamp.
+Some applications might require more than one timestamp per Object.  Such
+applications can use the properties in this document to convey transport
+relevant timestamps, and define additional timestamps properties as an offset.
 
 # IANA Considerations {#iana}
 
