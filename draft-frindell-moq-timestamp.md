@@ -168,7 +168,7 @@ CLOCK_ID is a Track Property identifying the clock on which the Track's timeline
 is placed:
 
 * If no CLOCK_ID Property is specified, but other Properties in this extension
-  are, the time is measured from POSIX time (seconds
+  are, the time is measured from POSIX time (time multiplied by TIMESCALE
   since 1970-01-01T00:00:00Z, excluding leap seconds).
 
 * A present CLOCK_ID identifies a clock with no defined relationship to
