@@ -53,34 +53,33 @@ endpoints use them.
 
 # Introduction
 
-Media over QUIC Transport (MOQT) {{MOQT}} delivers content as a sequence of
-Objects within a Track.  Many applications need to associate each Object with a
-time: a presentation or capture time for media samples, a sample time for sensor
-data, or a logical timestamp for ordering.  MOQT does not define a
+Media over QUIC Transport (MOQT) {{MOQT}} delivers Tracks that contain a
+sequence of Objects.  Many applications need to associate a time
+with each Object: a presentation or capture time for media samples, a sample time
+for sensor data, or a logical timestamp for ordering.  MOQT does not define a
 general-purpose Object timestamp, so applications carry timing in the Object
-payload or in application-specific Properties.  This prevents Relays and generic
-tooling from reasoning about Object timing -- for example, measuring an Object's
-age or the delay accumulated across a path -- without parsing the media format.
+payload or in application-specific Properties. This prevents Relays from using
+timestamps to measure and optimize delivery without parsing the media format.
 
-This document fills that gap with a minimal, general representation.  It focuses
-solely on how a timestamp is expressed and encoded.  It does not define which
-instant a timestamp denotes -- for example capture, presentation, or decode
+This document defines how a timestamp is encoded. Goals include
+ensuring the transport can make optimal decisions, visibility into latency,
+and providing a Property applications can use.  It does not define
+which instant a timestamp denotes -- for example capture, presentation, or decode
 time; specifications that reference this document, such as media mappings,
 define that.  It also does not define how a Relay or subscriber acts on a
 timestamp (scheduling, expiry, and synchronization across Tracks are out of
 scope), Object duration, or how publishers synchronize their clocks.
 
-The design has three goals:
+The design has three features:
 
-* **Common base**: A Track declares its time base once, so Objects do not repeat
-  it.
+* **Initial time**: A Track declares its start time once, so Objects can delta
+  encode their timestamps from the Initial time.
 
-* **Implicit timing**: A Track can define a mapping from Group ID and Object ID
-  to a timestamp, conveying timing with no per-Object bytes at all.
+* **Default Inter-Group/Object timing**: A Track can define a mapping from Group ID
+  and Object ID to a timestamp, conveying timing with no per-Object bytes at all.
 
-* **Compact encoding**: Per-Object timestamps are small integers, expressible
-  either as an explicit value or as a small signed correction to the implicit
-  mapped value.
+* **Compact encoding**: Per-Object timestamps are integers, expressing
+  either a delta value from the initial time or a correction to the default value.
 
 ## Relationship to Other Specifications {#related}
 
