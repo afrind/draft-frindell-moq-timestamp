@@ -159,7 +159,7 @@ timestamps in the Track.  Common values are 1000 for millisecond resolution and
 example, a media Track might use its codec sample rate).
 
 There is no default Timescale, to avoid silent unit errors such as confusing
-milliseconds with microseconds.  A subscriber that receives a Track 
+milliseconds with microseconds.  A subscriber that receives a Track
 with other Properties defined in this document but no TIMESCALE, or a TIMESCALE
 value of 0, treats the Track as malformed.
 
