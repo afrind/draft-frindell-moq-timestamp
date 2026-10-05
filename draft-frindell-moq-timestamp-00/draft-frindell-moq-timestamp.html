@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Timestamp Properties for MOQT</title>
+<meta content="Alan Frindell" name="author">
+<meta content="Ian Swett" name="author">
+<meta content="
+       This document defines a set of MOQT Properties for carrying per-Object
+timestamps efficiently. The encoded timestamp is intended for use in MOQT,
+but can be referenced for application specific purposes. 
+    " name="description">
+<meta content="xml2rfc 3.34.1" name="generator">
+<meta content="media over quic" name="keyword">
+<meta content="timestamp" name="keyword">
+<meta content="draft-frindell-moq-timestamp-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.12.2
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.9.1
+-->
+<link href="draft-frindell-moq-timestamp.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">moq-timestamp</td>
+<td class="right">October 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Frindell &amp; Swett</td>
+<td class="center">Expires 8 April 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Media Over QUIC</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-frindell-moq-timestamp-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-10-05" class="published">5 October 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-04-08">8 April 2027</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">A. Frindell</div>
+<div class="org">Meta</div>
+</div>
+<div class="author">
+      <div class="author-name">I. Swett</div>
+<div class="org">Google</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Timestamp Properties for MOQT</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines a set of MOQT Properties for carrying per-Object
+timestamps efficiently. The encoded timestamp is intended for use in MOQT,
+but can be referenced for application specific purposes.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        The latest revision of this draft can be found at <span><a href="https://afrind.github.io/draft-frindell-moq-timestamp/draft-frindell-moq-timestamp.html">https://afrind.github.io/draft-frindell-moq-timestamp/draft-frindell-moq-timestamp.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-frindell-moq-timestamp/">https://datatracker.ietf.org/doc/draft-frindell-moq-timestamp/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        Media Over QUIC Working Group mailing list (<span><a href="mailto:moq@ietf.org">mailto:moq@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/moq/">https://mailarchive.ietf.org/arch/browse/moq/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/moq/">https://www.ietf.org/mailman/listinfo/moq/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/afrind/draft-frindell-moq-timestamp">https://github.com/afrind/draft-frindell-moq-timestamp</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 8 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-relationship-to-other-speci" class="internal xref">Relationship to Other Specifications</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-signed-integer-zig-zag-enco" class="internal xref">Signed Integer Zig-Zag Encoding</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-property-handling-and-encod" class="internal xref">Property Handling and Encoding</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-track-properties" class="internal xref">Track Properties</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-timescale" class="internal xref">Timescale</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-clock-id" class="internal xref">Clock ID</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-timestamp-origin" class="internal xref">Timestamp Origin</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-timestamp-mapping" class="internal xref">Timestamp Mapping</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-object-timestamp" class="internal xref">Object Timestamp</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-locating-objects-by-time" class="internal xref">Locating Objects by Time</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-publisher-restarts" class="internal xref">Publisher Restarts</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-defining-additional-timesta" class="internal xref">Defining Additional Timestamps</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-timescale-property" class="internal xref">TIMESCALE Property</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-clock_id-property" class="internal xref">CLOCK_ID Property</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-timestamp_origin-property" class="internal xref">TIMESTAMP_ORIGIN Property</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-timestamp_mapping-property" class="internal xref">TIMESTAMP_MAPPING Property</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.5">
+                <p id="section-toc.1-1.9.2.5.1"><a href="#section-9.5" class="auto internal xref">9.5</a>.  <a href="#name-object_timestamp-property" class="internal xref">OBJECT_TIMESTAMP Property</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-examples" class="internal xref">Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-fixed-cadence" class="internal xref">Fixed Cadence</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-explicit-timestamps" class="internal xref">Explicit Timestamps</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.3">
+                <p id="section-toc.1-1.12.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-group-ids-as-timestamps" class="internal xref">Group IDs as Timestamps</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.4">
+                <p id="section-toc.1-1.12.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-timeline-template" class="internal xref">Timeline Template</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.5">
+                <p id="section-toc.1-1.12.2.5.1"><a href="#appendix-A.5" class="auto internal xref">A.5</a>.  <a href="#name-shared-clock-without-wall-c" class="internal xref">Shared Clock Without Wall-Clock Time</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> delivers Tracks that contain a
+sequence of Objects. Though the transport layer does not need to know
+media-oriented or application level timestamps, timing information can
+help it make optimal scheduling decisions.  Additionally, they provide
+visibility into latency and offer a Property applications can extend.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines how a MOQT timestamp is encoded.
+The design has three features:<a href="#section-1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1-3.1">
+          <p id="section-1-3.1.1"><strong>Initial time</strong>: A Track declares its start time once, so Objects can delta
+encode their timestamps from the Initial time.<a href="#section-1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-1-3.2">
+          <p id="section-1-3.2.1"><strong>Default Inter-Group/Object timing</strong>: A Track can define a mapping from Group ID
+and Object ID to a timestamp, conveying timing with no per-Object bytes at all.<a href="#section-1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-1-3.3">
+          <p id="section-1-3.3.1"><strong>Compact encoding</strong>: Per-Object timestamps are integers, expressing
+either a delta value from the initial time or a correction to the default value.<a href="#section-1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<div id="related">
+<section id="section-1.1">
+        <h3 id="name-relationship-to-other-speci">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-relationship-to-other-speci" class="section-name selfRef">Relationship to Other Specifications</a>
+        </h3>
+<p id="section-1.1-1">Several specifications already carry timing for MOQT Objects.  The Low Overhead
+Media Container <span>[<a href="#LOC" class="cite xref">LOC</a>]</span> defines Timestamp and Timescale Properties for media
+carried in LOC.  <span>[<a href="#TIMESTAMP-LCURLEY" class="cite xref">TIMESTAMP-LCURLEY</a>]</span> specifies transport-level use of those
+same LOC Properties so that Relays can make age-based decisions.  The MOQT
+Streaming Format <span>[<a href="#MSF" class="cite xref">MSF</a>]</span> relates media time, wall-clock time, and Location
+through catalog fields and timeline tracks, including a template for regular
+cadences, and numbers Groups by capture time in its log and metrics tracks.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">This document aims to provide a single, general representation that these and
+other specifications can reference.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">This document uses the terms Track, Object, Group, and Subgroup as defined in
+<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.  A "tick" is one unit of the Track's Timescale (see <a href="#timescale" class="auto internal xref">Section 4.1</a>).<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">All Property values in this document are encoded as variable-length integers
+(<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>) unless otherwise noted.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<div id="zig-zag">
+<section id="section-2.1">
+        <h3 id="name-signed-integer-zig-zag-enco">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-signed-integer-zig-zag-enco" class="section-name selfRef">Signed Integer Zig-Zag Encoding</a>
+        </h3>
+<p id="section-2.1-1">Signed values, such as the timestamp correction (<a href="#object-timestamp" class="auto internal xref">Section 5</a>), are
+carried in a variable-length integer using a zig-zag mapping that keeps
+small-magnitude values short: non-negative and negative values are interleaved
+so that the encoded value grows with the magnitude, in the order 0, -1, 1, -2,
+2, ...<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">To encode a signed value v as the variable-length integer u, and to decode it
+back (both using an arithmetic, sign-extending right shift):<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1-3">
+<pre>
+  u = (v &lt;&lt; 1) ^ (v &gt;&gt; (WIDTH - 1))     ; encode
+  v = (u &gt;&gt; 1) ^ -(u &amp; 1)               ; decode
+</pre><a href="#section-2.1-3" class="pilcrow">¶</a>
+</div>
+<p id="section-2.1-4">WIDTH is the bit width of the two's-complement representation of v (for example,
+64).  Values outside the range -2^63 to 2^63-1 cannot be represented.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="property-handling">
+<section id="section-3">
+      <h2 id="name-property-handling-and-encod">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-property-handling-and-encod" class="section-name selfRef">Property Handling and Encoding</a>
+      </h2>
+<p id="section-3-1">The Properties defined in this document are serialized as Key-Value-Pairs
+<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Each Property defined here <span class="bcp14">MUST</span> appear at most once on a given Track or Object,
+counting both the mutable list and Immutable Properties (<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>), and <span class="bcp14">MUST</span>
+appear only in its defined scope: OBJECT_TIMESTAMP <span class="bcp14">MUST NOT</span> appear as a Track
+Property, and the Track Properties (TIMESCALE, CLOCK_ID, TIMESTAMP_ORIGIN,
+TIMESTAMP_MAPPING) <span class="bcp14">MUST NOT</span> appear as Object Properties.  A subscriber that
+receives a Track or Object that violates these rules treats the track as
+malformed, as specified in <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">These Properties are set by the Original Publisher.  Relays <span class="bcp14">MUST NOT</span> add,
+modify, or remove them.  A publisher <span class="bcp14">MAY</span> carry them in Immutable Properties
+(<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>), for example to enable end-to-end authentication of timing.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Because the Properties defined here are interdependent, an endpoint that
+interprets any of them <span class="bcp14">MUST</span> implement all of them.<a href="#section-3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="track-properties">
+<section id="section-4">
+      <h2 id="name-track-properties">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-track-properties" class="section-name selfRef">Track Properties</a>
+      </h2>
+<p id="section-4-1">A Track that uses the timestamps defined in this document declares a Timescale
+(<a href="#timescale" class="auto internal xref">Section 4.1</a>) and, optionally, a Clock ID (<a href="#clock-id" class="auto internal xref">Section 4.2</a>) and Timestamp Origin
+(<a href="#timestamp-origin" class="auto internal xref">Section 4.3</a>) that place its timeline on a clock.  All Object
+timestamps in the Track are interpreted against this clock.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="timescale">
+<section id="section-4.1">
+        <h3 id="name-timescale">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-timescale" class="section-name selfRef">Timescale</a>
+        </h3>
+<p id="section-4.1-1">TIMESCALE is a Track Property giving the number of ticks per second used by all
+timestamps in the Track.  Common values are 1000 for millisecond resolution and
+1000000 for microsecond resolution, but any positive value <span class="bcp14">MAY</span> be used (for
+example, a media Track might use its codec sample rate).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">There is no default Timescale, to avoid silent unit errors such as confusing
+milliseconds with microseconds.  A subscriber that receives a Track
+with other Properties defined in this document but no TIMESCALE, or a TIMESCALE
+value of 0, treats the Track as malformed.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="clock-id">
+<section id="section-4.2">
+        <h3 id="name-clock-id">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-clock-id" class="section-name selfRef">Clock ID</a>
+        </h3>
+<p id="section-4.2-1">CLOCK_ID is a Track Property identifying the clock on which the Track's timeline
+is placed:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-2.1">
+            <p id="section-4.2-2.1.1">If no CLOCK_ID Property is specified, but other Properties in this extension
+are, the time is measured from POSIX time (in TIMESCALE ticks
+since 1970-01-01T00:00:00Z, excluding leap seconds).<a href="#section-4.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-2.2">
+            <p id="section-4.2-2.2.1">A present CLOCK_ID identifies a clock with no defined relationship to
+wall-clock time.  Tracks that carry the same non-zero CLOCK_ID share that
+clock, so their timestamps can be compared -- for example, the audio and video
+Tracks of an on-demand asset.<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.2-3">A non-zero CLOCK_ID identifies the same clock wherever it appears, so values
+chosen independently by different publishers can collide.  A publisher <span class="bcp14">SHOULD</span>
+choose values from a large space (at least 62 bits) in a way that makes
+accidental collisions negligible without coordination.  A value can be random,
+or derived deterministically -- for example, by hashing a stable identifier for
+the content -- so that separate encoders, or a publisher that restarts, use the
+same value for the same clock.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timestamp-origin">
+<section id="section-4.3">
+        <h3 id="name-timestamp-origin">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-timestamp-origin" class="section-name selfRef">Timestamp Origin</a>
+        </h3>
+<p id="section-4.3-1">TIMESTAMP_ORIGIN is a Track Property giving the position, in ticks on the
+Track's clock (<a href="#clock-id" class="auto internal xref">Section 4.2</a>), that corresponds to a timestamp of 0.  An Object's
+time on that clock (in TIMESCALE ticks) is:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3-2">
+<pre>
+  clock_time = timestamp_origin + object_timestamp
+</pre><a href="#section-4.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3-3">Because each Track's origin and timestamps are counted in its own ticks, Tracks
+with different Timescales are compared by converting clock_time to seconds.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.3-4">If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that carries
+TIMESTAMP_ORIGIN without CLOCK_ID is malformed.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timestamp-mapping">
+<section id="section-4.4">
+        <h3 id="name-timestamp-mapping">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-timestamp-mapping" class="section-name selfRef">Timestamp Mapping</a>
+        </h3>
+<p id="section-4.4-1">TIMESTAMP_MAPPING is a Track Property that defines how to compute an Object's
+timestamp from its Group ID and Object ID, with no per-Object Property.
+Drift can be expressed with a property on any Object (<a href="#object-timestamp" class="auto internal xref">Section 5</a>).<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-2">The property value is four variable-length integers: a Base Group ID,
+a Base Timestamp, a Group Multiplier, and an Object Multiplier.
+A value that does not parse as exactly four variable-length integers is
+malformed.  An Object's mapped timestamp is a linear function of its Group ID
+and Object ID:<a href="#section-4.4-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.4-3">
+<pre>
+  mapped_timestamp = base_timestamp
+                   + (group_id - base_group) * group_multiplier
+                   + object_id * object_multiplier
+</pre><a href="#section-4.4-3" class="pilcrow">¶</a>
+</div>
+<p id="section-4.4-4">The computation uses signed arithmetic, so it applies to every Group, including
+Groups before the Base Group.  A negative mapped_timestamp is valid only if a
+correction brings the Object's timestamp to a non-negative value.<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<p id="section-4.4-5">The publisher chooses the values from the meaning it gives its Group and Object
+identifiers:<a href="#section-4.4-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4-6.1">
+            <p id="section-4.4-6.1.1">The <strong>Group Multiplier</strong> converts a Group ID into the Group's start time.  Set
+it to 1 when Group IDs are themselves timestamps in ticks, so each Group is
+placed directly by its ID; or to the number of ticks per Group when Group IDs
+are sequential indices and Groups have a fixed duration.<a href="#section-4.4-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-6.2">
+            <p id="section-4.4-6.2.1">The <strong>Object Multiplier</strong> converts an Object ID into an offset within its
+Group, giving the per-Object cadence, or 0 when every Object in a Group shares
+the Group's time.<a href="#section-4.4-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.4-6.3">
+            <p id="section-4.4-6.3.1">The <strong>Base Group</strong> and <strong>Base Timestamp</strong> anchor the mapping, so that a
+publisher whose Group IDs do not start at 0 -- for example, one that begins
+numbering at a wall-clock value and increments by one -- can still use a fixed
+Group Multiplier.  Both are 0 when Group 0 starts at timestamp 0.<a href="#section-4.4-6.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.4-7">A publisher can thus rely on the mapping for the regular majority of Objects and
+spend per-Object bytes only where an Object's timestamp differs from the
+schedule.<a href="#section-4.4-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="object-timestamp">
+<section id="section-5">
+      <h2 id="name-object-timestamp">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-object-timestamp" class="section-name selfRef">Object Timestamp</a>
+      </h2>
+<p id="section-5-1">OBJECT_TIMESTAMP is an Object Property that conveys the Object's timestamp, in
+ticks of the Track's Timescale.  How its value is interpreted depends on whether
+the Track has a Timestamp Mapping (<a href="#timestamp-mapping" class="auto internal xref">Section 4.4</a>):<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-2.1">
+          <p id="section-5-2.1.1">On a Track without a Timestamp Mapping, the value is the Object's timestamp,
+encoded as an unsigned variable-length integer.  An Object that does not carry
+OBJECT_TIMESTAMP has no timestamp.<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.2">
+          <p id="section-5-2.2.1">On a Track with a Timestamp Mapping, the value is a signed correction to the
+Object's mapped timestamp, encoded using the zig-zag mapping in
+<a href="#zig-zag" class="auto internal xref">Section 2.1</a>.  An Object that does not carry OBJECT_TIMESTAMP takes its mapped
+timestamp:<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-2.2.2">
+<pre>
+  object_timestamp = mapped_timestamp + correction
+</pre><a href="#section-5-2.2.2" class="pilcrow">¶</a>
+</div>
+</li>
+      </ul>
+<p id="section-5-3">Because a Track's Properties are known before any of its Objects, a receiver
+always knows which rule applies.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">The timestamp of an Object is computed only from Track Properties and
+properties on the Object itself, and not any other Object.  This allows for
+correct computation even when Objects are filtered or arrive out of order.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">If a subscriber computes an Object's timestamp that is less than 0 or greater
+than 2^64-1, it treats the Track as malformed.<a href="#section-5-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="time-to-location">
+<section id="section-6">
+      <h2 id="name-locating-objects-by-time">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-locating-objects-by-time" class="section-name selfRef">Locating Objects by Time</a>
+      </h2>
+<p id="section-6-1">When a Track has a Timestamp Mapping with a non-zero Group Multiplier, a
+receiver can estimate the Location of the Object with a given timestamp t
+without receiving any Object:<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-6-2">
+<pre>
+  group_id  = base_group
+            + floor((t - base_timestamp) / group_multiplier)
+  object_id = floor((t - base_timestamp
+                     - (group_id - base_group) * group_multiplier)
+                    / object_multiplier)
+</pre><a href="#section-6-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6-3">If the Object Multiplier is 0, only the Group is estimated.  For a time c on the
+Track's clock (<a href="#clock-id" class="auto internal xref">Section 4.2</a>), t is c - timestamp_origin.<a href="#section-6-3" class="pilcrow">¶</a></p>
+<p id="section-6-4">The result is an estimate: it does not indicate whether the Location exists, and
+Objects that carry a correction might not be close to the estimate.<a href="#section-6-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="restarts">
+<section id="section-7">
+      <h2 id="name-publisher-restarts">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-publisher-restarts" class="section-name selfRef">Publisher Restarts</a>
+      </h2>
+<p id="section-7-1">Because Track Properties cannot change, a publisher that restarts and resumes
+publishing the same Track cannot revise its origin or re-anchor its mapping; it
+<span class="bcp14">MUST</span> reuse already established Track Properties.  A publisher that might
+restart <span class="bcp14">SHOULD</span> choose Properties that remain valid and compress well across a
+restart.<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="additional-timestamps">
+<section id="section-8">
+      <h2 id="name-defining-additional-timesta">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-defining-additional-timesta" class="section-name selfRef">Defining Additional Timestamps</a>
+      </h2>
+<p id="section-8-1">Some applications might require more than one timestamp per Object.  Such
+applications can use the properties in this document to convey transport
+relevant timestamps, and define additional timestamps properties as an offset.<a href="#section-8-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana">
+<section id="section-9">
+      <h2 id="name-iana-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-9-1">This document registers the following entries in the "MOQ Properties" registry
+established by <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.  The code points below are provisional values for
+interoperability testing; final values are to be assigned by IANA.  The Object
+Property uses a short (two-byte) code point because it is sent per Object.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<div id="timescale-property">
+<section id="section-9.1">
+        <h3 id="name-timescale-property">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-timescale-property" class="section-name selfRef">TIMESCALE Property</a>
+        </h3>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Scope</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">0x2C7A51E0</td>
+              <td class="text-left" rowspan="1" colspan="1">TIMESCALE</td>
+              <td class="text-left" rowspan="1" colspan="1">Track</td>
+              <td class="text-left" rowspan="1" colspan="1">This document, <a href="#timescale" class="auto internal xref">Section 4.1</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.1-2">The value is a variable-length integer giving ticks per second.<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="clockid-property">
+<section id="section-9.2">
+        <h3 id="name-clock_id-property">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-clock_id-property" class="section-name selfRef">CLOCK_ID Property</a>
+        </h3>
+<table class="center" id="table-2">
+          <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Scope</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">0x3E8D2B70</td>
+              <td class="text-left" rowspan="1" colspan="1">CLOCK_ID</td>
+              <td class="text-left" rowspan="1" colspan="1">Track</td>
+              <td class="text-left" rowspan="1" colspan="1">This document, <a href="#clock-id" class="auto internal xref">Section 4.2</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.2-2">The value is a variable-length integer identifying the Track's clock; 0
+identifies wall-clock time, and other values identify shared clocks.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timestamporigin-property">
+<section id="section-9.3">
+        <h3 id="name-timestamp_origin-property">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-timestamp_origin-property" class="section-name selfRef">TIMESTAMP_ORIGIN Property</a>
+        </h3>
+<table class="center" id="table-3">
+          <caption><a href="#table-3" class="selfRef">Table 3</a></caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Scope</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">0x31B49A6E</td>
+              <td class="text-left" rowspan="1" colspan="1">TIMESTAMP_ORIGIN</td>
+              <td class="text-left" rowspan="1" colspan="1">Track</td>
+              <td class="text-left" rowspan="1" colspan="1">This document, <a href="#timestamp-origin" class="auto internal xref">Section 4.3</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.3-2">The value is a variable-length integer giving the position, in ticks on the
+Track's clock, that corresponds to a timestamp of 0.<a href="#section-9.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timestampmapping-property">
+<section id="section-9.4">
+        <h3 id="name-timestamp_mapping-property">
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-timestamp_mapping-property" class="section-name selfRef">TIMESTAMP_MAPPING Property</a>
+        </h3>
+<table class="center" id="table-4">
+          <caption><a href="#table-4" class="selfRef">Table 4</a></caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Scope</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">0x27F308C5</td>
+              <td class="text-left" rowspan="1" colspan="1">TIMESTAMP_MAPPING</td>
+              <td class="text-left" rowspan="1" colspan="1">Track</td>
+              <td class="text-left" rowspan="1" colspan="1">This document, <a href="#timestamp-mapping" class="auto internal xref">Section 4.4</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.4-2">The value is four variable-length integers: a Base Group, and a Base Timestamp,
+Group Multiplier, and Object Multiplier, each in ticks.<a href="#section-9.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="objecttimestamp-property">
+<section id="section-9.5">
+        <h3 id="name-object_timestamp-property">
+<a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-object_timestamp-property" class="section-name selfRef">OBJECT_TIMESTAMP Property</a>
+        </h3>
+<table class="center" id="table-5">
+          <caption><a href="#table-5" class="selfRef">Table 5</a></caption>
+<thead>
+            <tr>
+              <th class="text-right" rowspan="1" colspan="1">Type</th>
+              <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Scope</th>
+              <th class="text-left" rowspan="1" colspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-right" rowspan="1" colspan="1">0x2D1A</td>
+              <td class="text-left" rowspan="1" colspan="1">OBJECT_TIMESTAMP</td>
+              <td class="text-left" rowspan="1" colspan="1">Object</td>
+              <td class="text-left" rowspan="1" colspan="1">This document, <a href="#object-timestamp" class="auto internal xref">Section 5</a>
+</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-9.5-2">The value is a variable-length integer giving the Object's timestamp in ticks
+or, on a Track with a Timestamp Mapping, a zig-zag encoded correction to the
+Object's mapped timestamp.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-10">
+      <h2 id="name-security-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-10-1">Timestamps are supplied by the publisher and are not authenticated by the
+transport.  An endpoint that acts on timestamps (for buffering, ordering, or
+expiry) <span class="bcp14">SHOULD</span> treat them as hints and apply its own sanity checks, since a
+misbehaving publisher can send misleading values.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">Timestamps and the Timestamp Origin can reveal information about the publisher's
+clock and the temporal structure of its content.  Where this is sensitive, a
+publisher <span class="bcp14">MAY</span> omit CLOCK_ID (and hence the origin), use a coarser Timescale, or
+omit these Properties.  An end-to-end encrypted payload can carry timing that is
+hidden from Relays, but when a Timestamp Mapping is in use, Group IDs and Object
+IDs reveal timing regardless.  See <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> for general considerations on
+logging untrusted Property values.<a href="#section-10-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-11">
+      <h2 id="name-references">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-11.1">
+        <h3 id="name-normative-references">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="MOQT">[MOQT]</dt>
+        <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-22</span>, <time datetime="2026-10-01" class="refDate">1 October 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-22">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-22</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-11.2">
+        <h3 id="name-informative-references">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="LOC">[LOC]</dt>
+        <dd>
+<span class="refAuthor">Zanaty, M.</span>, <span class="refAuthor">Nandakumar, S.</span>, and <span class="refAuthor">P. Thatcher</span>, <span class="refTitle">"Low Overhead Media Container"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-loc-04</span>, <time datetime="2026-07-20" class="refDate">20 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-04">https://datatracker.ietf.org/doc/html/draft-ietf-moq-loc-04</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="MSF">[MSF]</dt>
+        <dd>
+<span class="refAuthor">Law, W.</span> and <span class="refAuthor">S. Nandakumar</span>, <span class="refTitle">"MOQT Streaming Format"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-msf-01</span>, <time datetime="2026-06-02" class="refDate">2 June 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-01">https://datatracker.ietf.org/doc/html/draft-ietf-moq-msf-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TIMESTAMP-LCURLEY">[TIMESTAMP-LCURLEY]</dt>
+      <dd>
+<span class="refAuthor">Curley, L.</span>, <span class="refTitle">"MoQ Object Timestamp Extension"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-lcurley-moq-timestamp-01</span>, <time datetime="2026-08-03" class="refDate">3 August 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-lcurley-moq-timestamp-01">https://datatracker.ietf.org/doc/html/draft-lcurley-moq-timestamp-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="examples">
+<section id="appendix-A">
+      <h2 id="name-examples">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+      </h2>
+<p id="appendix-A-1">The following examples show how common timing arrangements, including those of
+the specifications in <a href="#related" class="auto internal xref">Section 1.1</a>, are expressed with the Properties in this
+document.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="fixed-cadence">
+<section id="appendix-A.1">
+        <h3 id="name-fixed-cadence">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-fixed-cadence" class="section-name selfRef">Fixed Cadence</a>
+        </h3>
+<p id="appendix-A.1-1">A Track sends 30000/1001 Objects per second in Groups of 60 Objects, with
+sequential Group IDs starting at 0, and the publisher knows the wall-clock time
+W (in ticks since the Unix epoch) at which Group 0 starts:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.1-2">
+<pre>
+  TIMESCALE         = 30000
+  CLOCK_ID          = 0
+  TIMESTAMP_ORIGIN  = W
+  TIMESTAMP_MAPPING = (0, 0, 60060, 1001)
+</pre><a href="#appendix-A.1-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.1-3">Objects on cadence carry no timestamp Property; an Object that deviates from the
+cadence carries a small correction in OBJECT_TIMESTAMP.<a href="#appendix-A.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="explicit-timestamps">
+<section id="appendix-A.2">
+        <h3 id="name-explicit-timestamps">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-explicit-timestamps" class="section-name selfRef">Explicit Timestamps</a>
+        </h3>
+<p id="appendix-A.2-1">A Track whose Objects each carry a wall-clock timestamp in microseconds, with
+its origin at 2026-01-01T00:00:00Z:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.2-2">
+<pre>
+  TIMESCALE         = 1000000
+  CLOCK_ID          = 0
+  TIMESTAMP_ORIGIN  = 1767225600000000
+</pre><a href="#appendix-A.2-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.2-3">Each Object carries OBJECT_TIMESTAMP, counted in microseconds since the origin.
+Omitting TIMESTAMP_ORIGIN instead gives microseconds since the Unix epoch, as
+LOC does when no Timescale is present <span>[<a href="#LOC" class="cite xref">LOC</a>]</span>, at the cost of larger values.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="group-ids-as-timestamps">
+<section id="appendix-A.3">
+        <h3 id="name-group-ids-as-timestamps">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-group-ids-as-timestamps" class="section-name selfRef">Group IDs as Timestamps</a>
+        </h3>
+<p id="appendix-A.3-1">A Track whose Group IDs are microseconds since the Unix epoch and whose Objects
+share their Group's time, such as an MSF log track <span>[<a href="#MSF" class="cite xref">MSF</a>]</span>:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.3-2">
+<pre>
+  TIMESCALE         = 1000000
+  CLOCK_ID          = 0
+  TIMESTAMP_MAPPING = (0, 0, 1, 0)
+</pre><a href="#appendix-A.3-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.3-3">Every Object's timestamp is its Group ID, with no per-Object bytes.<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="timeline-template">
+<section id="appendix-A.4">
+        <h3 id="name-timeline-template">
+<a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-timeline-template" class="section-name selfRef">Timeline Template</a>
+        </h3>
+<p id="appendix-A.4-1">An MSF timeline template <span>[<a href="#MSF" class="cite xref">MSF</a>]</span> with a start media time M, start Location (G,
+0), Location delta (1, 0), and start wall-clock time W, in which the media time
+and wall-clock deltas are both D, all in milliseconds, is expressed as:<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.4-2">
+<pre>
+  TIMESCALE         = 1000
+  CLOCK_ID          = 0
+  TIMESTAMP_ORIGIN  = W - M
+  TIMESTAMP_MAPPING = (G, M, D, 0)
+</pre><a href="#appendix-A.4-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.4-3">This requires a known wall-clock time with W at least M.  For on-demand content,
+where MSF sets the wall-clock values to 0, the publisher omits CLOCK_ID and
+TIMESTAMP_ORIGIN, or uses a shared Clock ID as in <a href="#shared-clock-example" class="auto internal xref">Appendix A.5</a>.  The
+template describes only Group start times; a publisher that also knows its
+per-Object cadence sets the Object Multiplier accordingly.<a href="#appendix-A.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="shared-clock-example">
+<section id="appendix-A.5">
+        <h3 id="name-shared-clock-without-wall-c">
+<a href="#appendix-A.5" class="section-number selfRef">A.5. </a><a href="#name-shared-clock-without-wall-c" class="section-name selfRef">Shared Clock Without Wall-Clock Time</a>
+        </h3>
+<p id="appendix-A.5-1">The audio and video Tracks of an on-demand asset have no meaningful wall-clock
+time but need to be aligned.  The publisher derives a Clock ID for the asset,
+for example from a hash of its identifier; both Tracks carry it and start at
+time 0 on that clock:<a href="#appendix-A.5-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-A.5-2">
+<pre>
+  Video:  TIMESCALE = 90000, CLOCK_ID = 0x1A3F5C9E07B2D461
+  Audio:  TIMESCALE = 48000, CLOCK_ID = 0x1A3F5C9E07B2D461
+</pre><a href="#appendix-A.5-2" class="pilcrow">¶</a>
+</div>
+<p id="appendix-A.5-3">A receiver aligns an audio Object and a video Object by comparing their
+timestamps in seconds.<a href="#appendix-A.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-B">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-B-1">The authors thank the authors of <span>[<a href="#LOC" class="cite xref">LOC</a>]</span>, <span>[<a href="#MSF" class="cite xref">MSF</a>]</span>, and <span>[<a href="#TIMESTAMP-LCURLEY" class="cite xref">TIMESTAMP-LCURLEY</a>]</span>,
+whose timestamp work (<a href="#related" class="auto internal xref">Section 1.1</a>) this document builds on, and the participants
+in the MOQ working group discussions that shaped it.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">Portions of this document were drafted with the assistance of Claude (Claude
+Code, Anthropic).<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Alan Frindell</span></div>
+<div dir="auto" class="left"><span class="org">Meta</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:afrind@meta.com" class="email">afrind@meta.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Ian Swett</span></div>
+<div dir="auto" class="left"><span class="org">Google</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ianswett@google.com" class="email">ianswett@google.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
