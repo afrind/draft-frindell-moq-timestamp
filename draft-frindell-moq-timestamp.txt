@@ -188,10 +188,7 @@ Table of Contents
 3.  Property Handling and Encoding
 
    The Properties defined in this document are serialized as Key-Value-
-   Pairs [MOQT].  The Track Properties are carried in the track related
-   control messages, and like all Track Properties they are fixed for
-   the lifetime of the Track ([MOQT]).  The Object Property is carried
-   in the Object header.
+   Pairs [MOQT].
 
    Each Property defined here MUST appear at most once on a given Track
    or Object, counting both the mutable list and Immutable Properties
@@ -215,7 +212,8 @@ Table of Contents
    A Track that uses the timestamps defined in this document declares a
    Timescale (Section 4.1) and, optionally, a Clock ID (Section 4.2) and
    Timestamp Origin (Section 4.3) that place its timeline on a clock.
-   All Object timestamps in the Track are interpreted against this base.
+   All Object timestamps in the Track are interpreted against this
+   clock.
 
 4.1.  Timescale
 
@@ -227,9 +225,8 @@ Table of Contents
 
    There is no default Timescale, to avoid silent unit errors such as
    confusing milliseconds with microseconds.  A subscriber that receives
-   a Track or Object with other Properties defined in this document but
-   no TIMESCALE, or a TIMESCALE value of 0, treats the Track as
-   malformed.
+   a Track with other Properties defined in this document but no
+   TIMESCALE, or a TIMESCALE value of 0, treats the Track as malformed.
 
 4.2.  Clock ID
 
@@ -273,24 +270,18 @@ Table of Contents
    If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that
    carries TIMESTAMP_ORIGIN without CLOCK_ID is malformed.
 
-   Carrying the origin once per Track keeps per-Object timestamps small:
-   a publisher can start its timeline near 0 and convey the clock time
-   as a delta from TIMESTAMP_ORIGIN in any Object.
-
 4.4.  Timestamp Mapping
 
    TIMESTAMP_MAPPING is a Track Property that defines how to compute an
-   Object's timestamp directly from its Group ID and Object ID, with no
-   per-Object Property.  It generalizes the common case of a Track with
-   a regular Object cadence, which can be conveyed with no per-Object
-   properties.  Drift from the cadence can be expressed using per-Object
-   corrections (Section 5).
+   Object's timestamp from its Group ID and Object ID, with no per-
+   Object Property.  Drift can be expressed with a property on any
+   Object (Section 5).
 
-   The property value is exactly four variable-length integers: a Base
-   Group ID, and a Base Timestamp, Group Multiplier, and an Object
-   Multiplier, all in ticks.  A value that does not parse as exactly
-   four variable-length integers is malformed.  An Object's mapped
-   timestamp is a linear function of its Group ID and Object ID:
+   The property value is four variable-length integers: a Base Group ID,
+   a Base Timestamp, a Group Multiplier, and an Object Multiplier.  A
+   value that does not parse as exactly four variable-length integers is
+   malformed.  An Object's mapped timestamp is a linear function of its
+   Group ID and Object ID:
 
      mapped_timestamp = base_timestamp
                       + (group_id - base_group) * group_multiplier
