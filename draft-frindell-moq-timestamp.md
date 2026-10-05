@@ -45,30 +45,21 @@ informative:
 --- abstract
 
 This document defines a set of MOQT Properties for carrying per-Object
-timestamps efficiently.  It defines only how timestamps are represented and
-compressed; it does not define what instant a timestamp denotes or prescribe how
-endpoints use them.
+timestamps efficiently. The encoded timestamp is intended for use in MOQT,
+but can be referenced by applications in order to improve encoding efficiency.
 
 --- middle
 
 # Introduction
 
 Media over QUIC Transport (MOQT) {{MOQT}} delivers Tracks that contain a
-sequence of Objects.  Many applications need to associate a time
-with each Object: a presentation or capture time for media samples, a sample time
-for sensor data, or a logical timestamp for ordering.  MOQT does not define a
-general-purpose Object timestamp, so applications carry timing in the Object
-payload or in application-specific Properties. This prevents Relays from using
-timestamps to measure and optimize delivery without parsing the media format.
+sequence of Objects. Though the transport layer does not need to know about
+detailed media-oriented timestamps, it does benefit from timestamps that allow
+it to do optimal scheduling.
 
-This document defines how a timestamp is encoded. Goals include
+This document defines how a MOQT timestamp is encoded. Goals include
 ensuring the transport can make optimal decisions, visibility into latency,
-and providing a Property applications can use.  It does not define
-which instant a timestamp denotes -- for example capture, presentation, or decode
-time; specifications that reference this document, such as media mappings,
-define that.  It also does not define how a Relay or subscriber acts on a
-timestamp (scheduling, expiry, and synchronization across Tracks are out of
-scope), Object duration, or how publishers synchronize their clocks.
+and providing a Property applications can extend.
 
 The design has three features:
 
