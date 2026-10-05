@@ -210,7 +210,7 @@ timestamp from its Group ID and Object ID, with no per-Object Property.
 Drift can be expressed with a property on any Object ({{object-timestamp}}).
 
 The property value is exactly four variable-length integers: a Base Group ID,
-a Base Timestamp, a Group Multiplier, and an Object Multiplier, all in ticks.
+a Base Timestamp, a Group Multiplier, and an Object Multiplier.
 A value that does not parse as exactly four variable-length integers is
 malformed.  An Object's mapped timestamp is a linear function of its Group ID
 and Object ID:
