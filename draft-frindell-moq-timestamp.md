@@ -302,6 +302,12 @@ MUST reuse already established Track Properties.  A publisher that might
 restart SHOULD choose Properties that remain valid and compress well across a
 restart.
 
+# Defining Additional Timestamps {#additional-timestamps}
+
+Some applications might require more than one timestamp per Object.  Such
+applications can use the properties in this document to convey transport
+relevant timestamps, and define additional timestamps properties as an offset.
+
 # IANA Considerations {#iana}
 
 This document registers the following entries in the "MOQ Properties" registry
