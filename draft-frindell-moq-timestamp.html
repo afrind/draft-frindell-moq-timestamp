@@ -9,9 +9,8 @@
 <meta content="Ian Swett" name="author">
 <meta content="
        This document defines a set of MOQT Properties for carrying per-Object
-timestamps efficiently.  It defines only how timestamps are represented and
-compressed; it does not define what instant a timestamp denotes or prescribe how
-endpoints use them. 
+timestamps efficiently. The encoded timestamp is intended for use in MOQT,
+but can be referenced for application specific purposes. 
     " name="description">
 <meta content="xml2rfc 3.34.1" name="generator">
 <meta content="media over quic" name="keyword">
@@ -1086,9 +1085,8 @@ svg {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines a set of MOQT Properties for carrying per-Object
-timestamps efficiently.  It defines only how timestamps are represented and
-compressed; it does not define what instant a timestamp denotes or prescribe how
-endpoints use them.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+timestamps efficiently. The encoded timestamp is intended for use in MOQT,
+but can be referenced for application specific purposes.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1272,33 +1270,24 @@ endpoints use them.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">Media over QUIC Transport (MOQT) <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span> delivers Tracks that contain a
-sequence of Objects.  Many applications need to associate a time
-with each Object: a presentation or capture time for media samples, a sample time
-for sensor data, or a logical timestamp for ordering.  MOQT does not define a
-general-purpose Object timestamp, so applications carry timing in the Object
-payload or in application-specific Properties. This prevents Relays from using
-timestamps to measure and optimize delivery without parsing the media format.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This document defines how a timestamp is encoded. Goals include
-ensuring the transport can make optimal decisions, visibility into latency,
-and providing a Property applications can use.  It does not define
-which instant a timestamp denotes -- for example capture, presentation, or decode
-time; specifications that reference this document, such as media mappings,
-define that.  It also does not define how a Relay or subscriber acts on a
-timestamp (scheduling, expiry, and synchronization across Tracks are out of
-scope), Object duration, or how publishers synchronize their clocks.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">The design has three features:<a href="#section-1-3" class="pilcrow">¶</a></p>
+sequence of Objects. Though the transport layer does not need to know
+media-oriented or application level timestamps, timing information can
+help it make optimal scheduling decisions.  Additionally, they provide
+visibility into latency and offer a Property applications can extend.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document defines how a MOQT timestamp is encoded.
+The design has three features:<a href="#section-1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-1-4.1">
-          <p id="section-1-4.1.1"><strong>Initial time</strong>: A Track declares its start time once, so Objects can delta
-encode their timestamps from the Initial time.<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-1-3.1">
+          <p id="section-1-3.1.1"><strong>Initial time</strong>: A Track declares its start time once, so Objects can delta
+encode their timestamps from the Initial time.<a href="#section-1-3.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-4.2">
-          <p id="section-1-4.2.1"><strong>Default Inter-Group/Object timing</strong>: A Track can define a mapping from Group ID
-and Object ID to a timestamp, conveying timing with no per-Object bytes at all.<a href="#section-1-4.2.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-3.2">
+          <p id="section-1-3.2.1"><strong>Default Inter-Group/Object timing</strong>: A Track can define a mapping from Group ID
+and Object ID to a timestamp, conveying timing with no per-Object bytes at all.<a href="#section-1-3.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="normal" id="section-1-4.3">
-          <p id="section-1-4.3.1"><strong>Compact encoding</strong>: Per-Object timestamps are integers, expressing
-either a delta value from the initial time or a correction to the default value.<a href="#section-1-4.3.1" class="pilcrow">¶</a></p>
+        <li class="normal" id="section-1-3.3">
+          <p id="section-1-3.3.1"><strong>Compact encoding</strong>: Per-Object timestamps are integers, expressing
+either a delta value from the initial time or a correction to the default value.<a href="#section-1-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <div id="related">

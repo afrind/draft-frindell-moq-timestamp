@@ -15,9 +15,8 @@ Expires: 8 April 2027                                             Google
 Abstract
 
    This document defines a set of MOQT Properties for carrying per-
-   Object timestamps efficiently.  It defines only how timestamps are
-   represented and compressed; it does not define what instant a
-   timestamp denotes or prescribe how endpoints use them.
+   Object timestamps efficiently.  The encoded timestamp is intended for
+   use in MOQT, but can be referenced for application specific purposes.
 
 About This Document
 
@@ -106,25 +105,14 @@ Table of Contents
 1.  Introduction
 
    Media over QUIC Transport (MOQT) [MOQT] delivers Tracks that contain
-   a sequence of Objects.  Many applications need to associate a time
-   with each Object: a presentation or capture time for media samples, a
-   sample time for sensor data, or a logical timestamp for ordering.
-   MOQT does not define a general-purpose Object timestamp, so
-   applications carry timing in the Object payload or in application-
-   specific Properties.  This prevents Relays from using timestamps to
-   measure and optimize delivery without parsing the media format.
+   a sequence of Objects.  Though the transport layer does not need to
+   know media-oriented or application level timestamps, timing
+   information can help it make optimal scheduling decisions.
+   Additionally, they provide visibility into latency and offer a
+   Property applications can extend.
 
-   This document defines how a timestamp is encoded.  Goals include
-   ensuring the transport can make optimal decisions, visibility into
-   latency, and providing a Property applications can use.  It does not
-   define which instant a timestamp denotes -- for example capture,
-   presentation, or decode time; specifications that reference this
-   document, such as media mappings, define that.  It also does not
-   define how a Relay or subscriber acts on a timestamp (scheduling,
-   expiry, and synchronization across Tracks are out of scope), Object
-   duration, or how publishers synchronize their clocks.
-
-   The design has three features:
+   This document defines how a MOQT timestamp is encoded.  The design
+   has three features:
 
    *  *Initial time*: A Track declares its start time once, so Objects
       can delta encode their timestamps from the Initial time.
