@@ -79,7 +79,7 @@ The design has three features:
   and Object ID to a timestamp, conveying timing with no per-Object bytes at all.
 
 * **Compact encoding**: Per-Object timestamps are integers, expressing
-  either an explicit value or a correction to the default value.
+  either a delta value from the initial time or a correction to the default value.
 
 ## Relationship to Other Specifications {#related}
 
