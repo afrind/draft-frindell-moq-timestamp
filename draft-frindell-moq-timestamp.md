@@ -75,7 +75,7 @@ The design has three features:
 * **Initial time**: A Track declares its start time once, so Objects can delta
   encode their timestamps from the Initial time.
 
-* **Default inter-Object timing**: A Track can define a mapping from Group ID
+* **Default Inter-Group/Object timing**: A Track can define a mapping from Group ID
   and Object ID to a timestamp, conveying timing with no per-Object bytes at all.
 
 * **Compact encoding**: Per-Object timestamps are integers, expressing
