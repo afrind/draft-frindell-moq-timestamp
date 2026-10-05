@@ -167,16 +167,14 @@ value of 0, treats the Track as malformed.
 CLOCK_ID is a Track Property identifying the clock on which the Track's timeline
 is placed:
 
-* A CLOCK_ID of 0 identifies wall-clock time, measured as POSIX time (seconds
+* If no CLOCK_ID Property is specified, but other Properties in this extension
+  are, the time is measured from POSIX time (seconds
   since 1970-01-01T00:00:00Z, excluding leap seconds).
 
-* A non-zero CLOCK_ID identifies a clock with no defined relationship to
+* A present CLOCK_ID identifies a clock with no defined relationship to
   wall-clock time.  Tracks that carry the same non-zero CLOCK_ID share that
   clock, so their timestamps can be compared -- for example, the audio and video
   Tracks of an on-demand asset.
-
-* If CLOCK_ID is absent, the Track's timeline is not placed on any clock: its
-  timestamps are meaningful only relative to one another within the Track.
 
 A non-zero CLOCK_ID identifies the same clock wherever it appears, so values
 chosen independently by different publishers can collide.  A publisher SHOULD
