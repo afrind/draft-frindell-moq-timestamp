@@ -55,12 +55,10 @@ but can be referenced for application specific purposes.
 Media over QUIC Transport (MOQT) {{MOQT}} delivers Tracks that contain a
 sequence of Objects. Though the transport layer does not need to know
 media-oriented or application level timestamps, timing information can
-help it make optimal scheduling decisions.
+help it make optimal scheduling decisions.  Additionally, they provide
+visibility into latency and offer a Property applications can extend.
 
-This document defines how a MOQT timestamp is encoded. Goals include
-ensuring the transport can make optimal decisions, visibility into latency,
-and providing a Property applications can extend.
-
+This document defines how a MOQT timestamp is encoded.
 The design has three features:
 
 * **Initial time**: A Track declares its start time once, so Objects can delta
