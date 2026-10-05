@@ -46,7 +46,7 @@ informative:
 
 This document defines a set of MOQT Properties for carrying per-Object
 timestamps efficiently. The encoded timestamp is intended for use in MOQT,
-but can be referenced by applications in order to improve encoding efficiency.
+but can be referenced for application specific purposes.
 
 --- middle
 
