@@ -1,0 +1,590 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2026-10-06T04:09:08.193023+00:00",
+  "repo": "afrind/draft-frindell-moq-timestamp",
+  "labels": [
+    {
+      "name": "accessibility",
+      "description": "Barrier affecting people with disabilities",
+      "color": "f143ab"
+    },
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 6,
+      "id": "I_kwDOU6xPE88AAAABVCNdeg",
+      "title": "Private CLOCK_ID",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/6",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "The original version of the draft said CLOCK_ID=0 was referenced from the Unix Epoch, and an absent CLOCK_ID was track-private -- the timestamps were comparable within the track but not across any other tracks.  PR #4 removed this and CLOCK_ID defaults to Unix, and any present ID is a shared clock.  Publishers can choose unique values per track, but endpoints with track access can re-use that ID in their own Tracks.",
+      "createdAt": "2026-10-05T04:45:05Z",
+      "updatedAt": "2026-10-05T04:45:05Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 7,
+      "id": "I_kwDOU6xPE88AAAABVNx8qw",
+      "title": "End-to-end delivery timeouts?",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/7",
+      "state": "OPEN",
+      "author": "sharmafb",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Is there a separate draft in progress that builds on top of this draft in order to have end-to-end delivery timeouts?",
+      "createdAt": "2026-10-05T20:47:46Z",
+      "updatedAt": "2026-10-05T20:47:46Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 8,
+      "id": "I_kwDOU6xPE88AAAABVORqIg",
+      "title": "Is this actually true? \"Track's Properties are known before any of its Objects\"",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/8",
+      "state": "OPEN",
+      "author": "sharmafb",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Is this actually true? For example, if someone sends a publish message along with objects in parallel, then can't the objects arrive before the request? ",
+      "createdAt": "2026-10-05T21:34:23Z",
+      "updatedAt": "2026-10-05T21:34:23Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOU6xPE88AAAABGnrXBQ",
+      "title": "Intro suggestions",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/1",
+      "state": "MERGED",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The current intro reads like AI",
+      "createdAt": "2026-10-05T01:48:22Z",
+      "updatedAt": "2026-10-05T02:38:17Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "ce21fc6483ae679f81121896b9b60864458291c9",
+      "headRepository": "ianswett/draft-frindell-moq-timestamp",
+      "headRefName": "patch-1",
+      "headRefOid": "8503d1b64e3709552255acd71efc572bdf7b516f",
+      "closedAt": "2026-10-05T02:38:17Z",
+      "mergedAt": "2026-10-05T02:38:17Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "9cfb22790be6c42ca83a5c852b7f207545229051"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQmwKRw",
+          "commit": {
+            "abbreviatedOid": "4db1ddc"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T01:56:31Z",
+          "updatedAt": "2026-10-05T01:58:36Z",
+          "comments": [
+            {
+              "originalPosition": 23,
+              "body": "Another goal is giving the relay visibility into operational latencies.  I'm not sure which I think is the _primary_ goal, but meh.",
+              "createdAt": "2026-10-05T01:56:31Z",
+              "updatedAt": "2026-10-05T01:58:36Z"
+            },
+            {
+              "originalPosition": 48,
+              "body": "```suggestion\r\n  either a delta value from the initial time or a correction to the default value.\r\n```",
+              "createdAt": "2026-10-05T01:58:07Z",
+              "updatedAt": "2026-10-05T01:58:36Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "It's also inter group.",
+              "createdAt": "2026-10-05T01:58:28Z",
+              "updatedAt": "2026-10-05T01:58:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm1GCw",
+          "commit": {
+            "abbreviatedOid": "4db1ddc"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-05T02:19:46Z",
+          "updatedAt": "2026-10-05T02:19:46Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm3Ebw",
+          "commit": {
+            "abbreviatedOid": "4db1ddc"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:25:11Z",
+          "updatedAt": "2026-10-05T02:25:11Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\nThis document defines how a timestamp is encoded. Goals include\nensuring the transport can make optimal decisions, visibility into latency,\nand as a Property different applications can use.  It does not define\n```",
+              "createdAt": "2026-10-05T02:25:11Z",
+              "updatedAt": "2026-10-05T02:25:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm32Sw",
+          "commit": {
+            "abbreviatedOid": "504ffcb"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:26:37Z",
+          "updatedAt": "2026-10-05T02:26:38Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\n* **Default Inter-Group/Object timing**: A Track can define a mapping from Group ID\n```",
+              "createdAt": "2026-10-05T02:26:37Z",
+              "updatedAt": "2026-10-05T02:26:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm4_-A",
+          "commit": {
+            "abbreviatedOid": "b7c2557"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:30:42Z",
+          "updatedAt": "2026-10-05T02:30:43Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "```suggestion\r\nand providing a Property applications can use.  It does not define\r\n```",
+              "createdAt": "2026-10-05T02:30:42Z",
+              "updatedAt": "2026-10-05T02:30:43Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOU6xPE88AAAABGn09lw",
+      "title": "More editorial #2",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/2",
+      "state": "MERGED",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Ends at Object Timestamp",
+      "createdAt": "2026-10-05T02:15:58Z",
+      "updatedAt": "2026-10-05T02:49:02Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "ce21fc6483ae679f81121896b9b60864458291c9",
+      "headRepository": "ianswett/draft-frindell-moq-timestamp",
+      "headRefName": "patch-2",
+      "headRefOid": "d32ed3f438d026d767a096a3b98f0af9d9fbe5f2",
+      "closedAt": "2026-10-05T02:49:02Z",
+      "mergedAt": "2026-10-05T02:49:02Z",
+      "mergedBy": "ianswett",
+      "mergeCommit": {
+        "oid": "29969aceb25dfcc5bd9a1aed75b221d8884dd9a9"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm0wLA",
+          "commit": {
+            "abbreviatedOid": "ec7681e"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-05T02:18:12Z",
+          "updatedAt": "2026-10-05T02:19:29Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "I guess I meant OBJECT_TIMESTAMP without TIMESCALE is malformed.",
+              "createdAt": "2026-10-05T02:18:13Z",
+              "updatedAt": "2026-10-05T02:19:29Z"
+            },
+            {
+              "originalPosition": 49,
+              "body": "group ID is not in ticks, but if you think that's clear I'm good.",
+              "createdAt": "2026-10-05T02:19:23Z",
+              "updatedAt": "2026-10-05T02:19:29Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm53cg",
+          "commit": {
+            "abbreviatedOid": "ec7681e"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:34:40Z",
+          "updatedAt": "2026-10-05T02:34:40Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "These properties are fairly interdependent, so I'm not sure where the right place to say this is?",
+              "createdAt": "2026-10-05T02:34:40Z",
+              "updatedAt": "2026-10-05T02:34:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm6Gjw",
+          "commit": {
+            "abbreviatedOid": "ec7681e"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:35:44Z",
+          "updatedAt": "2026-10-05T02:35:45Z",
+          "comments": [
+            {
+              "originalPosition": 49,
+              "body": "```suggestion\na Base Timestamp, a Group Multiplier, and an Object Multiplier.\n```",
+              "createdAt": "2026-10-05T02:35:44Z",
+              "updatedAt": "2026-10-05T02:35:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm6Mig",
+          "commit": {
+            "abbreviatedOid": "e16ccc2"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:36:11Z",
+          "updatedAt": "2026-10-05T02:36:11Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "```suggestion\nThe property value is four variable-length integers: a Base Group ID,\n```",
+              "createdAt": "2026-10-05T02:36:11Z",
+              "updatedAt": "2026-10-05T02:36:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQm6Urg",
+          "commit": {
+            "abbreviatedOid": "e16ccc2"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T02:36:46Z",
+          "updatedAt": "2026-10-05T02:36:47Z",
+          "comments": [
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nmilliseconds with microseconds.  A subscriber that receives a Track\r\n```",
+              "createdAt": "2026-10-05T02:36:46Z",
+              "updatedAt": "2026-10-05T02:36:47Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOU6xPE88AAAABGoESvQ",
+      "title": "Shorten the intro",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/3",
+      "state": "MERGED",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Talk about what the draft does do",
+      "createdAt": "2026-10-05T02:59:34Z",
+      "updatedAt": "2026-10-05T04:36:13Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "29969aceb25dfcc5bd9a1aed75b221d8884dd9a9",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "ianswett-shorten-intro",
+      "headRefOid": "9e8b59514bdce196a0acfcdac6e93b8e744f4d03",
+      "closedAt": "2026-10-05T04:36:08Z",
+      "mergedAt": "2026-10-05T04:36:08Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "2382fe090844de875c1fddf772ec1bde24e87b5b"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQnRmTw",
+          "commit": {
+            "abbreviatedOid": "574068a"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T03:55:50Z",
+          "updatedAt": "2026-10-05T04:03:07Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\r\nbut can be referenced for application specific purposes.\r\n```",
+              "createdAt": "2026-10-05T03:55:50Z",
+              "updatedAt": "2026-10-05T04:03:07Z"
+            },
+            {
+              "originalPosition": 25,
+              "body": "```suggestion\r\nsequence of Objects. Though the transport layer does not need to know\r\nmedia-oriented or application level timestamps, timing information can\r\nhelp it make optimal scheduling decisions.\r\n```",
+              "createdAt": "2026-10-05T03:59:47Z",
+              "updatedAt": "2026-10-05T04:03:07Z"
+            },
+            {
+              "originalPosition": 35,
+              "body": "If you take my suggestion above, then \"optimal decisions\" appears twice.  Might need to just collapse to a single paragaph.",
+              "createdAt": "2026-10-05T04:03:04Z",
+              "updatedAt": "2026-10-05T04:03:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQnYMlQ",
+          "commit": {
+            "abbreviatedOid": "6cea861"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T04:23:52Z",
+          "updatedAt": "2026-10-05T04:23:52Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "I think it's ok as-is, but shorter is commonly better",
+              "createdAt": "2026-10-05T04:23:52Z",
+              "updatedAt": "2026-10-05T04:23:52Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOU6xPE88AAAABGoZDsA",
+      "title": "Clarify CLOCK_ID",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/4",
+      "state": "MERGED",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "If you specify other Parameters, I think the epoch is a good default.",
+      "createdAt": "2026-10-05T03:53:58Z",
+      "updatedAt": "2026-10-05T04:41:05Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "29969aceb25dfcc5bd9a1aed75b221d8884dd9a9",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "ianswett-clarify-clockid",
+      "headRefOid": "1623361f66b95cf808264308cb485ad3c01cbd84",
+      "closedAt": "2026-10-05T04:41:05Z",
+      "mergedAt": "2026-10-05T04:41:05Z",
+      "mergedBy": "ianswett",
+      "mergeCommit": {
+        "oid": "a562c6a2f2721b036b9f88c56038ff170e005537"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQnXzeQ",
+          "commit": {
+            "abbreviatedOid": "c0d0f6a"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T04:22:15Z",
+          "updatedAt": "2026-10-05T04:25:03Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "seconds isn't right is it?  All time is in TIMESCALE units.",
+              "createdAt": "2026-10-05T04:22:15Z",
+              "updatedAt": "2026-10-05T04:25:04Z"
+            },
+            {
+              "originalPosition": 15,
+              "body": "This was a feature of the draft - I can mark time in my own track but a relay wouldn't be able to compare it to any other track.\r\n\r\nThe alternative is to use a random CLOCK_ID, but that CLOCK_ID is public e.g. in a meeting setting, so a subscriber could copy it.",
+              "createdAt": "2026-10-05T04:24:31Z",
+              "updatedAt": "2026-10-05T04:25:04Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQnZ_jA",
+          "commit": {
+            "abbreviatedOid": "c0d0f6a"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T04:30:10Z",
+          "updatedAt": "2026-10-05T04:30:10Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\n  are, the time is measured from POSIX time (time multiplied by TIMESCALE\n```",
+              "createdAt": "2026-10-05T04:30:10Z",
+              "updatedAt": "2026-10-05T04:30:10Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABQnbTXg",
+          "commit": {
+            "abbreviatedOid": "51ae6dc"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-05T04:34:59Z",
+          "updatedAt": "2026-10-05T04:34:59Z",
+          "comments": [
+            {
+              "originalPosition": 6,
+              "body": "```suggestion\r\n  are, the time is measured from POSIX time (in TIMESCALE ticks\r\n```",
+              "createdAt": "2026-10-05T04:34:59Z",
+              "updatedAt": "2026-10-05T04:35:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOU6xPE88AAAABGocOcw",
+      "title": "Remove Additional Timestamps",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/5",
+      "state": "MERGED",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Maybe we can say something about it, but this seems too much.",
+      "createdAt": "2026-10-05T04:03:14Z",
+      "updatedAt": "2026-10-05T04:41:17Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "29969aceb25dfcc5bd9a1aed75b221d8884dd9a9",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "ianswett-delete-AT",
+      "headRefOid": "a089fbe6aafef0fd8c645e7c23c096be36e37e30",
+      "closedAt": "2026-10-05T04:41:14Z",
+      "mergedAt": "2026-10-05T04:41:14Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "9f67ec744f103d2ce8afb6e07e47430f155376e4"
+      },
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "body": "How about:\r\n\r\n```\r\n# Defining Additional Timestamps {#additional-timestamps}\r\n\r\nSome applications might require more than one timestamp per Object.  Such applications\r\ncan use the properties in this document to convey transport relevant timestamps, and\r\ndefine additional timestamps properties as an offset.\r\n```",
+          "createdAt": "2026-10-05T04:29:46Z",
+          "updatedAt": "2026-10-05T04:29:46Z"
+        }
+      ],
+      "reviews": []
+    }
+  ]
+}
