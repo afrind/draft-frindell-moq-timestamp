@@ -94,11 +94,9 @@ This document uses the terms Track, Object, Group, and Subgroup as defined in
 {{MOQT}}.  A "tick" is one unit of the Track's Timescale (see {{timescale}}).
 
 All Property values in this document are encoded as variable-length integers
-({{MOQT}}) unless otherwise noted.  Variable-length integers inside a
-length-prefixed Property value use the encoding defined in {{MOQT}} (introduced
-in draft-ietf-moq-transport-18), whatever version of MOQT the session
-negotiated.  Relays forward such a value unchanged, so its encoding cannot
-depend on the session.
+({{MOQT}}, introduced in draft-ietf-moq-transport-17) unless otherwise noted.
+The integers in TIMESTAMP_MAPPING are not re-encoded when it is carried over a
+draft-16 or earlier session.
 
 ## Signed Integer Zig-Zag Encoding {#zig-zag}
 
@@ -210,9 +208,8 @@ TIMESTAMP_MAPPING is a Track Property that defines how to compute an Object's
 timestamp from its Group ID and Object ID, with no per-Object Property.
 Drift can be expressed with a property on any Object ({{object-timestamp}}).
 
-The property value is four variable-length integers
-({{conventions-and-definitions}}): a Base Group ID, a Base Timestamp, a Group
-Multiplier, and an Object Multiplier.
+The property value is four variable-length integers: a Base Group ID,
+a Base Timestamp, a Group Multiplier, and an Object Multiplier.
 A value that does not parse as exactly four variable-length integers is
 malformed.  An Object's mapped timestamp is a linear function of its Group ID
 and Object ID:
@@ -355,9 +352,8 @@ Track's clock, that corresponds to a timestamp of 0.
 |-----:|:-----|:------|:--------------|
 | 0x27F308C5 | TIMESTAMP_MAPPING | Track | This document, {{timestamp-mapping}} |
 
-The value is four variable-length integers ({{conventions-and-definitions}}):
-a Base Group, and a Base Timestamp, Group Multiplier, and Object Multiplier,
-each in ticks.
+The value is four variable-length integers: a Base Group, and a Base Timestamp,
+Group Multiplier, and Object Multiplier, each in ticks.
 
 ## OBJECT_TIMESTAMP Property
 
