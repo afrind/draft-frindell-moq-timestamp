@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-08T03:50:54.072814+00:00",
+  "timestamp": "2026-10-25T02:35:30.735220+00:00",
   "repo": "afrind/draft-frindell-moq-timestamp",
   "labels": [
     {
@@ -139,6 +139,22 @@
       "body": "https://datatracker.ietf.org/doc/draft-nandakumar-moq-tempo/ also conveys time and should receive proper citation.",
       "createdAt": "2026-10-06T19:08:12Z",
       "updatedAt": "2026-10-06T19:08:12Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 10,
+      "id": "I_kwDOU6xPE88AAAABZUNtRw",
+      "title": "Define a CLOCK_ID for TAI",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/10",
+      "state": "OPEN",
+      "author": "gwendalsimon",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft defines one clock: CLOCK_ID 0, POSIX time excluding leap seconds. Would it be possible to add a defined CLOCK_ID for TAI (International Atomic Time, a continuous time scale with no leap seconds)? Its time 0 would be 1970-01-01T00:00:00 TAI. We would use it with OBJECT_TIMESTAMP to carry the emission time of each Object in MPEG-2 transport stream tracks (see [draft-gregoire-moq-msfts](https://github.com/mondain/msfts))",
+      "createdAt": "2026-10-23T07:37:40Z",
+      "updatedAt": "2026-10-23T07:37:40Z",
       "closedAt": null,
       "comments": []
     }
