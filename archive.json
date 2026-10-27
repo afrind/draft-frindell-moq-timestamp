@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-25T02:35:30.735220+00:00",
+  "timestamp": "2026-10-27T03:09:06.630463+00:00",
   "repo": "afrind/draft-frindell-moq-timestamp",
   "labels": [
     {
@@ -640,6 +640,85 @@
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOU6xPE88AAAABKm4C8g",
+      "title": "Encode TIMESTAMP_MAPPING integers the same way on every MOQT version",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/11",
+      "state": "OPEN",
+      "author": "gmarzot",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Relays forward TIMESTAMP_MAPPING unchanged. When its integers followed the session's varint encoding, a relay bridging a draft-18 publisher to a draft-16 subscriber corrupted it. We saw this in interop through moqx: CMAF video was rejected as malformed, and audio timing decoded silently to wrong values.\n\nAs Alan suggested, this notes where the encoding was introduced, and that the mapping's integers aren't re-encoded over a draft-16 or earlier session.\n",
+      "createdAt": "2026-10-25T17:06:48Z",
+      "updatedAt": "2026-10-25T17:37:31Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "9f67ec744f103d2ce8afb6e07e47430f155376e4",
+      "headRepository": "gmarzot/draft-frindell-moq-timestamp",
+      "headRefName": "mapping-vi64",
+      "headRefOid": "516ef16fa608b88ac161f9482c17840e8e28ca15",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABUG2fyg",
+          "commit": {
+            "abbreviatedOid": "deb6af3"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-25T17:22:03Z",
+          "updatedAt": "2026-10-25T17:22:53Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I'd try to say more with less.  You can add the \"introduced in draft-17?\" note to the parenthetical aside in the first sentence, then a single sentence that says passing this property over a draft-16 or earlier session does not re-encode the varints.\r\n\r\nLength prefixed is irrelevant.",
+              "createdAt": "2026-10-25T17:22:03Z",
+              "updatedAt": "2026-10-25T17:22:53Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "not sure we need this backref?  Seems unambiguous.",
+              "createdAt": "2026-10-25T17:22:43Z",
+              "updatedAt": "2026-10-25T17:22:53Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "Same",
+              "createdAt": "2026-10-25T17:22:49Z",
+              "updatedAt": "2026-10-25T17:22:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABUG5bYQ",
+          "commit": {
+            "abbreviatedOid": "516ef16"
+          },
+          "author": "gmarzot",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-25T17:37:31Z",
+          "updatedAt": "2026-10-25T17:37:31Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "Done: two sentences, and both back-refs dropped. I named TIMESTAMP_MAPPING rather than all Property values, because on a draft-16 session a varint-valued property is framed by the session's own Key-Value-Pair encoding, so only the mapping's integers stay as they are.",
+              "createdAt": "2026-10-25T17:37:31Z",
+              "updatedAt": "2026-10-25T17:37:31Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
