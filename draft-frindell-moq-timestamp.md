@@ -186,8 +186,7 @@ time on that clock (in TIMESCALE ticks) is:
 Because each Track's origin and timestamps are counted in its own ticks, Tracks
 with different Timescales are compared by converting clock_time to seconds.
 
-If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that carries
-TIMESTAMP_ORIGIN without CLOCK_ID is malformed.
+If TIMESTAMP_ORIGIN is absent, the default value is 0.
 
 ## Timestamp Mapping {#timestamp-mapping}
 
@@ -356,11 +355,11 @@ misbehaving publisher can send misleading values.
 
 Timestamps and the Timestamp Origin can reveal information about the publisher's
 clock and the temporal structure of its content.  Where this is sensitive, a
-publisher MAY omit CLOCK_ID (and hence the origin), use a coarser Timescale, or
-omit these Properties.  An end-to-end encrypted payload can carry timing that is
-hidden from Relays, but when a Timestamp Mapping is in use, Group IDs and Object
-IDs reveal timing regardless.  See {{MOQT}} for general considerations on
-logging untrusted Property values.
+publisher MAY place its timeline on a shared clock ({{clock-id}}) rather than
+POSIX time, use a coarser Timescale, or omit these Properties.  An end-to-end
+encrypted payload can carry timing that is hidden from Relays, but when a
+Timestamp Mapping is in use, Group IDs and Object IDs reveal timing regardless.
+See {{MOQT}} for general considerations on logging untrusted Property values.
 
 --- back
 
