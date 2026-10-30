@@ -160,7 +160,15 @@ is placed:
   are, the time is measured from POSIX time (in TIMESCALE ticks
   since 1970-01-01T00:00:00Z, excluding leap seconds).
 
-* A present CLOCK_ID identifies a clock with no defined relationship to
+* CLOCK_ID values from 0 to 63 are reserved for clocks listed in the "MOQ Clock
+  IDs" registry ({{clock-id-registry}}).  A receiver treats a reserved value it
+  does not recognize as a clock with no known relationship to wall-clock time.
+
+* A CLOCK_ID of 1 identifies International Atomic Time (TAI), a continuous time
+  scale with no leap seconds, measured in TIMESCALE ticks since
+  1970-01-01T00:00:00 TAI.
+
+* Any value above 63 identifies a clock with no defined relationship to
   wall-clock time.  Tracks that carry the same CLOCK_ID share that clock, so
   their timestamps can be compared -- for example, the audio and video Tracks of
   an on-demand asset.
@@ -171,7 +179,8 @@ choose values from a large space (at least 62 bits) in a way that makes
 accidental collisions negligible without coordination.  A value can be random,
 or derived deterministically -- for example, by hashing a stable identifier for
 the content -- so that separate encoders, or a publisher that restarts, use the
-same value for the same clock.
+same value for the same clock.  A publisher MUST NOT use a reserved value for
+any clock other than the one defined for it.
 
 ## Timestamp Origin {#timestamp-origin}
 
@@ -297,7 +306,8 @@ relevant timestamps, and define additional timestamps properties as an offset.
 # IANA Considerations {#iana}
 
 This document registers the following entries in the "MOQ Properties" registry
-established by {{MOQT}}.  The code points below are provisional values for
+established by {{MOQT}}, and establishes the "MOQ Clock IDs" registry
+({{clock-id-registry}}).  The code points below are provisional values for
 interoperability testing; final values are to be assigned by IANA.  The Object
 Property uses a short (two-byte) code point because it is sent per Object.
 
@@ -315,9 +325,11 @@ The value is a variable-length integer giving ticks per second.
 |-----:|:-----|:------|:--------------|
 | 0x3E8D2B70 | CLOCK_ID | Track | This document, {{clock-id}} |
 
-The value is a variable-length integer identifying a shared clock with no
-defined relationship to wall-clock time.  A Track without CLOCK_ID uses POSIX
-time.
+The value is a variable-length integer identifying the Track's clock: 1
+identifies TAI, other values from 0 to 63 are reserved for clocks listed in the
+"MOQ Clock IDs" registry ({{clock-id-registry}}), and values above 63 identify
+shared clocks with no defined relationship to wall-clock time.  A Track without
+CLOCK_ID uses POSIX time.
 
 ## TIMESTAMP_ORIGIN Property
 
@@ -346,6 +358,22 @@ Group Multiplier, and Object Multiplier, each in ticks.
 The value is a variable-length integer giving the Object's timestamp in ticks
 or, on a Track with a Timestamp Mapping, a zig-zag encoded correction to the
 Object's mapped timestamp.
+
+## MOQ Clock IDs Registry {#clock-id-registry}
+
+This document establishes the "MOQ Clock IDs" registry, which lists the reserved
+CLOCK_ID values from 0 to 63 ({{clock-id}}).  Values above 63 are chosen by
+publishers and are not registered.  New entries are assigned under the
+Specification Required policy {{?RFC8126}}.  Each entry has a Value, a Clock
+name, and a Specification that defines the clock's time scale and epoch.
+
+The initial contents of the registry are:
+
+| Value | Clock | Specification |
+|------:|:------|:--------------|
+| 0 | Unassigned | |
+| 1 | International Atomic Time (TAI) | This document, {{clock-id}} |
+| 2-63 | Unassigned | |
 
 # Security Considerations
 
