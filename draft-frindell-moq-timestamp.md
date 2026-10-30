@@ -41,6 +41,7 @@ informative:
   LOC: I-D.ietf-moq-loc
   MSF: I-D.ietf-moq-msf
   TIMESTAMP-LCURLEY: I-D.lcurley-moq-timestamp
+  TEMPO: I-D.nandakumar-moq-tempo
 
 --- abstract
 
@@ -79,6 +80,8 @@ same LOC Properties so that Relays can make age-based decisions.  The MOQT
 Streaming Format {{MSF}} relates media time, wall-clock time, and Location
 through catalog fields and timeline tracks, including a template for regular
 cadences, and numbers Groups by capture time in its log and metrics tracks.
+{{TEMPO}} stamps each Object with its playout time and send time, which Relays
+update as they forward, to synchronize playout across subscribers.
 
 This document aims to provide a single, general representation that these and
 other specifications can reference.
@@ -475,8 +478,8 @@ timestamps in seconds.
 # Acknowledgments
 {:numbered="false"}
 
-The authors thank the authors of {{LOC}}, {{MSF}}, and {{TIMESTAMP-LCURLEY}},
-whose timestamp work ({{related}}) this document builds on, and the participants
+The authors thank the authors of {{LOC}}, {{MSF}}, {{TIMESTAMP-LCURLEY}}, and
+{{TEMPO}}, whose timestamp work ({{related}}) this document builds on, and the participants
 in the MOQ working group discussions that shaped it.
 
 Portions of this document were drafted with the assistance of Claude (Claude
