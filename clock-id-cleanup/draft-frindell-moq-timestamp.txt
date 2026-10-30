@@ -251,10 +251,7 @@ Table of Contents
    ticks, Tracks with different Timescales are compared by converting
    clock_time to seconds.
 
-   If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track
-   without CLOCK_ID can carry TIMESTAMP_ORIGIN, giving the origin's
-   position in POSIX time, so that its Objects carry small offsets
-   rather than full POSIX timestamps.
+   If TIMESTAMP_ORIGIN is absent, the default value is 0.
 
 4.4.  Timestamp Mapping
 
