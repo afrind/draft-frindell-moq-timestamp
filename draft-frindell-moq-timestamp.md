@@ -161,11 +161,11 @@ is placed:
   since 1970-01-01T00:00:00Z, excluding leap seconds).
 
 * A present CLOCK_ID identifies a clock with no defined relationship to
-  wall-clock time.  Tracks that carry the same non-zero CLOCK_ID share that
-  clock, so their timestamps can be compared -- for example, the audio and video
-  Tracks of an on-demand asset.
+  wall-clock time.  Tracks that carry the same CLOCK_ID share that clock, so
+  their timestamps can be compared -- for example, the audio and video Tracks of
+  an on-demand asset.
 
-A non-zero CLOCK_ID identifies the same clock wherever it appears, so values
+A CLOCK_ID value identifies the same clock wherever it appears, so values
 chosen independently by different publishers can collide.  A publisher SHOULD
 choose values from a large space (at least 62 bits) in a way that makes
 accidental collisions negligible without coordination.  A value can be random,
@@ -315,8 +315,9 @@ The value is a variable-length integer giving ticks per second.
 |-----:|:-----|:------|:--------------|
 | 0x3E8D2B70 | CLOCK_ID | Track | This document, {{clock-id}} |
 
-The value is a variable-length integer identifying the Track's clock; 0
-identifies wall-clock time, and other values identify shared clocks.
+The value is a variable-length integer identifying a shared clock with no
+defined relationship to wall-clock time.  A Track without CLOCK_ID uses POSIX
+time.
 
 ## TIMESTAMP_ORIGIN Property
 
@@ -377,7 +378,6 @@ W (in ticks since the Unix epoch) at which Group 0 starts:
 
 ~~~
   TIMESCALE         = 30000
-  CLOCK_ID          = 0
   TIMESTAMP_ORIGIN  = W
   TIMESTAMP_MAPPING = (0, 0, 60060, 1001)
 ~~~
@@ -392,7 +392,6 @@ its origin at 2026-01-01T00:00:00Z:
 
 ~~~
   TIMESCALE         = 1000000
-  CLOCK_ID          = 0
   TIMESTAMP_ORIGIN  = 1767225600000000
 ~~~
 
@@ -407,7 +406,6 @@ share their Group's time, such as an MSF log track {{MSF}}:
 
 ~~~
   TIMESCALE         = 1000000
-  CLOCK_ID          = 0
   TIMESTAMP_MAPPING = (0, 0, 1, 0)
 ~~~
 
@@ -421,16 +419,15 @@ and wall-clock deltas are both D, all in milliseconds, is expressed as:
 
 ~~~
   TIMESCALE         = 1000
-  CLOCK_ID          = 0
   TIMESTAMP_ORIGIN  = W - M
   TIMESTAMP_MAPPING = (G, M, D, 0)
 ~~~
 
 This requires a known wall-clock time with W at least M.  For on-demand content,
-where MSF sets the wall-clock values to 0, the publisher omits CLOCK_ID and
-TIMESTAMP_ORIGIN, or uses a shared Clock ID as in {{shared-clock-example}}.  The
-template describes only Group start times; a publisher that also knows its
-per-Object cadence sets the Object Multiplier accordingly.
+where MSF sets the wall-clock values to 0, the publisher instead uses a shared
+Clock ID as in {{shared-clock-example}}.  The template describes only Group
+start times; a publisher that also knows its per-Object cadence sets the Object
+Multiplier accordingly.
 
 ## Shared Clock Without Wall-Clock Time {#shared-clock-example}
 
