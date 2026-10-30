@@ -262,8 +262,9 @@ the Track has a Timestamp Mapping ({{timestamp-mapping}}):
     object_timestamp = mapped_timestamp + correction
   ~~~
 
-Because a Track's Properties are known before any of its Objects, a receiver
-always knows which rule applies.
+A receiver interprets an Object's timestamp using the Track Properties received
+with the message that associates the Object with its Track, so it always knows
+which rule applies.
 
 The timestamp of an Object is computed only from Track Properties and
 properties on the Object itself, and not any other Object.  This allows for
