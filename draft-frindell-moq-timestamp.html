@@ -1325,7 +1325,9 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <p id="section-2-2">This document uses the terms Track, Object, Group, and Subgroup as defined in
 <span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>.  A "tick" is one unit of the Track's Timescale (see <a href="#timescale" class="auto internal xref">Section 4.1</a>).<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">All Property values in this document are encoded as variable-length integers
-(<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>) unless otherwise noted.<a href="#section-2-3" class="pilcrow">¶</a></p>
+(<span>[<a href="#MOQT" class="cite xref">MOQT</a>]</span>, introduced in draft-ietf-moq-transport-17) unless otherwise noted.
+The integers in TIMESTAMP_MAPPING are not re-encoded when it is carried over a
+draft-16 or earlier session.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <div id="zig-zag">
 <section id="section-2.1">
         <h3 id="name-signed-integer-zig-zag-enco">

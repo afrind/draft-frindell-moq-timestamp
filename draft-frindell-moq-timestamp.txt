@@ -156,7 +156,9 @@ Table of Contents
    (see Section 4.1).
 
    All Property values in this document are encoded as variable-length
-   integers ([MOQT]) unless otherwise noted.
+   integers ([MOQT], introduced in draft-ietf-moq-transport-17) unless
+   otherwise noted.  The integers in TIMESTAMP_MAPPING are not re-
+   encoded when it is carried over a draft-16 or earlier session.
 
 2.1.  Signed Integer Zig-Zag Encoding
 
