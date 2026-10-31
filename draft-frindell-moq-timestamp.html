@@ -1530,8 +1530,9 @@ timestamp:<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
 </div>
 </li>
       </ul>
-<p id="section-5-3">Because a Track's Properties are known before any of its Objects, a receiver
-always knows which rule applies.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-3">A receiver interprets an Object's timestamp using the Track Properties received
+with the message that associates the Object with its Track, so it always knows
+which rule applies.<a href="#section-5-3" class="pilcrow">¶</a></p>
 <p id="section-5-4">The timestamp of an Object is computed only from Track Properties and
 properties on the Object itself, and not any other Object.  This allows for
 correct computation even when Objects are filtered or arrive out of order.<a href="#section-5-4" class="pilcrow">¶</a></p>
