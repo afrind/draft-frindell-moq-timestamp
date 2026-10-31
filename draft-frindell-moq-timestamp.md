@@ -94,7 +94,9 @@ This document uses the terms Track, Object, Group, and Subgroup as defined in
 {{MOQT}}.  A "tick" is one unit of the Track's Timescale (see {{timescale}}).
 
 All Property values in this document are encoded as variable-length integers
-({{MOQT}}) unless otherwise noted.
+({{MOQT}}, introduced in draft-ietf-moq-transport-17) unless otherwise noted.
+The integers in TIMESTAMP_MAPPING are not re-encoded when it is carried over a
+draft-16 or earlier session.
 
 ## Signed Integer Zig-Zag Encoding {#zig-zag}
 
