@@ -5,8 +5,8 @@
 Media Over QUIC                                              A. Frindell
 Internet-Draft                                                      Meta
 Intended status: Standards Track                                I. Swett
-Expires: 8 April 2027                                             Google
-                                                          5 October 2026
+Expires: 4 May 2027                                               Google
+                                                         31 October 2026
 
 
                      Timestamp Properties for MOQT
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 April 2027.
+   This Internet-Draft will expire on 4 May 2027.
 
 Copyright Notice
 
@@ -89,6 +89,7 @@ Table of Contents
      9.3.  TIMESTAMP_ORIGIN Property
      9.4.  TIMESTAMP_MAPPING Property
      9.5.  OBJECT_TIMESTAMP Property
+     9.6.  MOQ Clock IDs Registry
    10. Security Considerations
    11. References
      11.1.  Normative References
@@ -135,6 +136,9 @@ Table of Contents
    media time, wall-clock time, and Location through catalog fields and
    timeline tracks, including a template for regular cadences, and
    numbers Groups by capture time in its log and metrics tracks.
+   [TEMPO] stamps each Object with its playout time and send time, which
+   Relays update as they forward, to synchronize playout across
+   subscribers.
 
    This document aims to provide a single, general representation that
    these and other specifications can reference.
@@ -225,19 +229,29 @@ Table of Contents
       extension are, the time is measured from POSIX time (in TIMESCALE
       ticks since 1970-01-01T00:00:00Z, excluding leap seconds).
 
-   *  A present CLOCK_ID identifies a clock with no defined relationship
-      to wall-clock time.  Tracks that carry the same non-zero CLOCK_ID
-      share that clock, so their timestamps can be compared -- for
-      example, the audio and video Tracks of an on-demand asset.
+   *  CLOCK_ID values from 0 to 63 are reserved for clocks listed in the
+      "MOQ Clock IDs" registry (Section 9.6).  A receiver treats a
+      reserved value it does not recognize as a clock with no known
+      relationship to wall-clock time.
 
-   A non-zero CLOCK_ID identifies the same clock wherever it appears, so
+   *  A CLOCK_ID of 1 identifies International Atomic Time (TAI), a
+      continuous time scale with no leap seconds, measured in TIMESCALE
+      ticks since 1970-01-01T00:00:00 TAI.
+
+   *  Any value above 63 identifies a clock with no defined relationship
+      to wall-clock time.  Tracks that carry the same CLOCK_ID share
+      that clock, so their timestamps can be compared -- for example,
+      the audio and video Tracks of an on-demand asset.
+
+   A CLOCK_ID value identifies the same clock wherever it appears, so
    values chosen independently by different publishers can collide.  A
    publisher SHOULD choose values from a large space (at least 62 bits)
    in a way that makes accidental collisions negligible without
    coordination.  A value can be random, or derived deterministically --
    for example, by hashing a stable identifier for the content -- so
    that separate encoders, or a publisher that restarts, use the same
-   value for the same clock.
+   value for the same clock.  A publisher MUST NOT use a reserved value
+   for any clock other than the one defined for it.
 
 4.3.  Timestamp Origin
 
@@ -251,8 +265,7 @@ Table of Contents
    ticks, Tracks with different Timescales are compared by converting
    clock_time to seconds.
 
-   If TIMESTAMP_ORIGIN is absent, the default value is 0.  A Track that
-   carries TIMESTAMP_ORIGIN without CLOCK_ID is malformed.
+   If TIMESTAMP_ORIGIN is absent, the default value is 0.
 
 4.4.  Timestamp Mapping
 
@@ -357,30 +370,19 @@ Table of Contents
 
 8.  Defining Additional Timestamps
 
-   Some applications need more than one timestamp per Object -- for
-   example, a media mapping that distinguishes presentation time from
-   decode time.  This document defines a single timestamp per Object; a
-   specification that needs others can define them as additional Object
-   Properties.  Such a specification SHOULD designate which of its
-   timestamps is the Object's timestamp defined in this document, and
-   SHOULD define each additional timestamp as follows:
-
-   *  Its value is a signed offset from the Object's timestamp, encoded
-      using the zig-zag mapping in Section 2.1:
-
-        additional_timestamp = object_timestamp + offset
-
-   *  The offset is counted in ticks of the Track's Timescale, and the
-      additional timestamp is on the same clock, with the same origin,
-      as the Object's timestamp.
+   Some applications might require more than one timestamp per Object.
+   Such applications can use the properties in this document to convey
+   transport relevant timestamps, and define additional timestamps
+   properties as an offset.
 
 9.  IANA Considerations
 
    This document registers the following entries in the "MOQ Properties"
-   registry established by [MOQT].  The code points below are
-   provisional values for interoperability testing; final values are to
-   be assigned by IANA.  The Object Property uses a short (two-byte)
-   code point because it is sent per Object.
+   registry established by [MOQT], and establishes the "MOQ Clock IDs"
+   registry (Section 9.6).  The code points below are provisional values
+   for interoperability testing; final values are to be assigned by
+   IANA.  The Object Property uses a short (two-byte) code point because
+   it is sent per Object.
 
 9.1.  TIMESCALE Property
 
@@ -404,9 +406,11 @@ Table of Contents
 
                                  Table 2
 
-   The value is a variable-length integer identifying the Track's clock;
-   0 identifies wall-clock time, and other values identify shared
-   clocks.
+   The value is a variable-length integer identifying the Track's clock:
+   1 identifies TAI, other values from 0 to 63 are reserved for clocks
+   listed in the "MOQ Clock IDs" registry (Section 9.6), and values
+   above 63 identify shared clocks with no defined relationship to wall-
+   clock time.  A Track without CLOCK_ID uses POSIX time.
 
 9.3.  TIMESTAMP_ORIGIN Property
 
@@ -450,6 +454,30 @@ Table of Contents
    in ticks or, on a Track with a Timestamp Mapping, a zig-zag encoded
    correction to the Object's mapped timestamp.
 
+9.6.  MOQ Clock IDs Registry
+
+   This document establishes the "MOQ Clock IDs" registry, which lists
+   the reserved CLOCK_ID values from 0 to 63 (Section 4.2).  Values
+   above 63 are chosen by publishers and are not registered.  New
+   entries are assigned under the Specification Required policy
+   [RFC8126].  Each entry has a Value, a Clock name, and a Specification
+   that defines the clock's time scale and epoch.
+
+   The initial contents of the registry are:
+
+       +=======+=================================+================+
+       | Value | Clock                           | Specification  |
+       +=======+=================================+================+
+       |     0 | Unassigned                      |                |
+       +-------+---------------------------------+----------------+
+       |     1 | International Atomic Time (TAI) | This document, |
+       |       |                                 | Section 4.2    |
+       +-------+---------------------------------+----------------+
+       |  2-63 | Unassigned                      |                |
+       +-------+---------------------------------+----------------+
+
+                                 Table 6
+
 10.  Security Considerations
 
    Timestamps are supplied by the publisher and are not authenticated by
@@ -460,12 +488,12 @@ Table of Contents
 
    Timestamps and the Timestamp Origin can reveal information about the
    publisher's clock and the temporal structure of its content.  Where
-   this is sensitive, a publisher MAY omit CLOCK_ID (and hence the
-   origin), use a coarser Timescale, or omit these Properties.  An end-
-   to-end encrypted payload can carry timing that is hidden from Relays,
-   but when a Timestamp Mapping is in use, Group IDs and Object IDs
-   reveal timing regardless.  See [MOQT] for general considerations on
-   logging untrusted Property values.
+   this is sensitive, a publisher MAY place its timeline on a shared
+   clock (Section 4.2) rather than POSIX time, use a coarser Timescale,
+   or omit these Properties.  An end-to-end encrypted payload can carry
+   timing that is hidden from Relays, but when a Timestamp Mapping is in
+   use, Group IDs and Object IDs reveal timing regardless.  See [MOQT]
+   for general considerations on logging untrusted Property values.
 
 11.  References
 
@@ -499,6 +527,17 @@ Table of Contents
               2026, <https://datatracker.ietf.org/doc/html/draft-ietf-
               moq-msf-01>.
 
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/rfc/rfc8126>.
+
+   [TEMPO]    Nandakumar, S. and C. F. Jennings, "TEMPO: Timing
+              Extension for Media Playout Orchestration over MoQ", Work
+              in Progress, Internet-Draft, draft-nandakumar-moq-tempo-
+              00, 6 July 2026, <https://datatracker.ietf.org/doc/html/
+              draft-nandakumar-moq-tempo-00>.
+
    [TIMESTAMP-LCURLEY]
               Curley, L., "MoQ Object Timestamp Extension", Work in
               Progress, Internet-Draft, draft-lcurley-moq-timestamp-01,
@@ -519,7 +558,6 @@ A.1.  Fixed Cadence
    starts:
 
      TIMESCALE         = 30000
-     CLOCK_ID          = 0
      TIMESTAMP_ORIGIN  = W
      TIMESTAMP_MAPPING = (0, 0, 60060, 1001)
 
@@ -533,7 +571,6 @@ A.2.  Explicit Timestamps
    microseconds, with its origin at 2026-01-01T00:00:00Z:
 
      TIMESCALE         = 1000000
-     CLOCK_ID          = 0
      TIMESTAMP_ORIGIN  = 1767225600000000
 
    Each Object carries OBJECT_TIMESTAMP, counted in microseconds since
@@ -548,7 +585,6 @@ A.3.  Group IDs as Timestamps
    [MSF]:
 
      TIMESCALE         = 1000000
-     CLOCK_ID          = 0
      TIMESTAMP_MAPPING = (0, 0, 1, 0)
 
    Every Object's timestamp is its Group ID, with no per-Object bytes.
@@ -561,16 +597,14 @@ A.4.  Timeline Template
    milliseconds, is expressed as:
 
      TIMESCALE         = 1000
-     CLOCK_ID          = 0
      TIMESTAMP_ORIGIN  = W - M
      TIMESTAMP_MAPPING = (G, M, D, 0)
 
    This requires a known wall-clock time with W at least M.  For on-
    demand content, where MSF sets the wall-clock values to 0, the
-   publisher omits CLOCK_ID and TIMESTAMP_ORIGIN, or uses a shared Clock
-   ID as in Appendix A.5.  The template describes only Group start
-   times; a publisher that also knows its per-Object cadence sets the
-   Object Multiplier accordingly.
+   publisher instead uses a shared Clock ID as in Appendix A.5.  The
+   template describes only Group start times; a publisher that also
+   knows its per-Object cadence sets the Object Multiplier accordingly.
 
 A.5.  Shared Clock Without Wall-Clock Time
 
@@ -587,10 +621,10 @@ A.5.  Shared Clock Without Wall-Clock Time
 
 Acknowledgments
 
-   The authors thank the authors of [LOC], [MSF], and
-   [TIMESTAMP-LCURLEY], whose timestamp work (Section 1.1) this document
-   builds on, and the participants in the MOQ working group discussions
-   that shaped it.
+   The authors thank the authors of [LOC], [MSF], [TIMESTAMP-LCURLEY],
+   and [TEMPO], whose timestamp work (Section 1.1) this document builds
+   on, and the participants in the MOQ working group discussions that
+   shaped it.
 
    Portions of this document were drafted with the assistance of Claude
    (Claude Code, Anthropic).
