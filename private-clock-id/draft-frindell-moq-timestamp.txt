@@ -5,8 +5,8 @@
 Media Over QUIC                                              A. Frindell
 Internet-Draft                                                      Meta
 Intended status: Standards Track                                I. Swett
-Expires: 3 May 2027                                               Google
-                                                         30 October 2026
+Expires: 4 May 2027                                               Google
+                                                         31 October 2026
 
 
                      Timestamp Properties for MOQT
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 May 2027.
+   This Internet-Draft will expire on 4 May 2027.
 
 Copyright Notice
 
