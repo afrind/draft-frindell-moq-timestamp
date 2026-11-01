@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-27T03:09:06.630463+00:00",
+  "timestamp": "2026-11-01T03:38:32.280907+00:00",
   "repo": "afrind/draft-frindell-moq-timestamp",
   "labels": [
     {
@@ -107,15 +107,15 @@
       "id": "I_kwDOU6xPE88AAAABVORqIg",
       "title": "Is this actually true? \"Track's Properties are known before any of its Objects\"",
       "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/8",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "sharmafb",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Is this actually true? For example, if someone sends a publish message along with objects in parallel, then can't the objects arrive before the request? ",
       "createdAt": "2026-10-05T21:34:23Z",
-      "updatedAt": "2026-10-06T19:07:12Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-31T15:29:04Z",
+      "closedAt": "2026-10-31T15:29:04Z",
       "comments": [
         {
           "author": "afrind",
@@ -123,6 +123,13 @@
           "body": "@sharmafb yes the objects can arrive before the PUBLISH but the receiver wouldn't know which track these objects belong to until the PUBLISH establishes the track alias.  So effectively the properties are known by the time the receiver can do anything useful with the objects.",
           "createdAt": "2026-10-06T19:07:12Z",
           "updatedAt": "2026-10-06T19:07:12Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "body": "It holds today. A receiver can't tell which Track an Object belongs to until the Track Alias is established, and the same SUBSCRIBE_OK or PUBLISH that establishes the alias carries the Track Properties. An Object that arrives first waits in a buffer until the alias resolves, and by then its Track's Properties are known.\n\nThe draft could state that dependency explicitly instead of asserting the ordering. Something like: \"A receiver interprets an Object's timestamp using the Track Properties received with the message that associates the Object with its Track.\"\n",
+          "createdAt": "2026-10-30T01:20:49Z",
+          "updatedAt": "2026-10-30T01:20:49Z"
         }
       ]
     },
@@ -131,15 +138,15 @@
       "id": "I_kwDOU6xPE88AAAABVcVofA",
       "title": "Cite Tempo in the prior art",
       "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/9",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "afrind",
       "authorAssociation": "OWNER",
       "assignees": [],
       "labels": [],
       "body": "https://datatracker.ietf.org/doc/draft-nandakumar-moq-tempo/ also conveys time and should receive proper citation.",
       "createdAt": "2026-10-06T19:08:12Z",
-      "updatedAt": "2026-10-06T19:08:12Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-31T12:56:47Z",
+      "closedAt": "2026-10-31T12:56:47Z",
       "comments": []
     },
     {
@@ -147,14 +154,62 @@
       "id": "I_kwDOU6xPE88AAAABZUNtRw",
       "title": "Define a CLOCK_ID for TAI",
       "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "gwendalsimon",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "The draft defines one clock: CLOCK_ID 0, POSIX time excluding leap seconds. Would it be possible to add a defined CLOCK_ID for TAI (International Atomic Time, a continuous time scale with no leap seconds)? Its time 0 would be 1970-01-01T00:00:00 TAI. We would use it with OBJECT_TIMESTAMP to carry the emission time of each Object in MPEG-2 transport stream tracks (see [draft-gregoire-moq-msfts](https://github.com/mondain/msfts))",
       "createdAt": "2026-10-23T07:37:40Z",
-      "updatedAt": "2026-10-23T07:37:40Z",
+      "updatedAt": "2026-10-31T12:55:32Z",
+      "closedAt": "2026-10-31T12:55:32Z",
+      "comments": []
+    },
+    {
+      "number": 12,
+      "id": "I_kwDOU6xPE88AAAABbET7eA",
+      "title": "CLOCK_ID text left over from before #4",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/12",
+      "state": "CLOSED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "PR #4 made a missing CLOCK_ID mean POSIX time, and any present value a clock unrelated to wall-clock time. Some text still uses the old meaning, where 0 was wall clock and a missing CLOCK_ID left the timeline unplaced:\n\n- The CLOCK_ID IANA entry says \"0 identifies wall-clock time, and other values identify shared clocks.\"\n- The Fixed Cadence, Explicit Timestamps, Group IDs as Timestamps, and Timeline Template examples all set `CLOCK_ID = 0` for wall-clock tracks. Read literally, those tracks are now on a clock unrelated to wall-clock time.\n- The CLOCK_ID definition says Tracks with the same *non-zero* CLOCK_ID share a clock. It doesn't say what a present CLOCK_ID of 0 means.\n- For on-demand content, the Timeline Template example says the publisher \"omits CLOCK_ID and TIMESTAMP_ORIGIN.\" That now places the content at 1970 on wall-clock time, rather than leaving it unplaced. The shared-clock alternative in the same sentence still works. The omission option should go, or #6 should settle what an unplaced timeline looks like.\n\n#10 already reads the draft as \"CLOCK_ID 0 = POSIX.\"\n",
+      "createdAt": "2026-10-30T01:20:47Z",
+      "updatedAt": "2026-10-31T12:55:31Z",
+      "closedAt": "2026-10-31T12:55:31Z",
+      "comments": []
+    },
+    {
+      "number": 13,
+      "id": "I_kwDOU6xPE88AAAABbET8BA",
+      "title": "A wall-clock track can't use TIMESTAMP_ORIGIN",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/13",
+      "state": "CLOSED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\"A Track that carries TIMESTAMP_ORIGIN without CLOCK_ID is malformed.\" Since #4, a missing CLOCK_ID is how a track says it's on wall-clock time, so a wall-clock track can't carry an origin. Every Object then carries a full epoch timestamp, about 8 bytes at microsecond resolution, when a delta from the origin would take 2\u20133.\n\nThe Security Considerations text (\"omit CLOCK_ID (and hence the origin)\") also assumes the old model.\n\nThe fix is probably to drop the rule and let a missing CLOCK_ID with an origin mean POSIX time plus that origin.\n\nWe hit this implementing the draft in moxygen's moqtest publisher. It has to send microseconds since the epoch on every Object.\n",
+      "createdAt": "2026-10-30T01:20:48Z",
+      "updatedAt": "2026-10-31T12:55:29Z",
+      "closedAt": "2026-10-31T12:55:29Z",
+      "comments": []
+    },
+    {
+      "number": 22,
+      "id": "I_kwDOU6xPE88AAAABbhq6yg",
+      "title": "Should there be a special Namespace scoped clock?",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/issues/22",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "PR #20 defined Clock ID 0 as Track-local.  Should there be a Clock ID (1?) that indicates the clock is shared across the Namespace?",
+      "createdAt": "2026-11-01T02:06:29Z",
+      "updatedAt": "2026-11-01T02:06:29Z",
       "closedAt": null,
       "comments": []
     }
@@ -522,7 +577,7 @@
       "labels": [],
       "body": "If you specify other Parameters, I think the epoch is a good default.",
       "createdAt": "2026-10-05T03:53:58Z",
-      "updatedAt": "2026-10-05T04:41:05Z",
+      "updatedAt": "2026-10-31T12:57:51Z",
       "baseRepository": "afrind/draft-frindell-moq-timestamp",
       "baseRefName": "main",
       "baseRefOid": "29969aceb25dfcc5bd9a1aed75b221d8884dd9a9",
@@ -646,24 +701,26 @@
       "id": "PR_kwDOU6xPE88AAAABKm4C8g",
       "title": "Encode TIMESTAMP_MAPPING integers the same way on every MOQT version",
       "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/11",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "gmarzot",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Relays forward TIMESTAMP_MAPPING unchanged. When its integers followed the session's varint encoding, a relay bridging a draft-18 publisher to a draft-16 subscriber corrupted it. We saw this in interop through moqx: CMAF video was rejected as malformed, and audio timing decoded silently to wrong values.\n\nAs Alan suggested, this notes where the encoding was introduced, and that the mapping's integers aren't re-encoded over a draft-16 or earlier session.\n",
       "createdAt": "2026-10-25T17:06:48Z",
-      "updatedAt": "2026-10-25T17:37:31Z",
+      "updatedAt": "2026-10-31T20:33:55Z",
       "baseRepository": "afrind/draft-frindell-moq-timestamp",
       "baseRefName": "main",
       "baseRefOid": "9f67ec744f103d2ce8afb6e07e47430f155376e4",
       "headRepository": "gmarzot/draft-frindell-moq-timestamp",
       "headRefName": "mapping-vi64",
       "headRefOid": "516ef16fa608b88ac161f9482c17840e8e28ca15",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-10-31T20:33:55Z",
+      "mergedAt": "2026-10-31T20:33:55Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "6553526eb16fc21d0972d28e80649d4b5c88f019"
+      },
       "comments": [],
       "reviews": [
         {
@@ -704,7 +761,7 @@
             "abbreviatedOid": "516ef16"
           },
           "author": "gmarzot",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "state": "COMMENTED",
           "body": "",
           "createdAt": "2026-10-25T17:37:31Z",
@@ -715,6 +772,328 @@
               "body": "Done: two sentences, and both back-refs dropped. I named TIMESTAMP_MAPPING rather than all Property values, because on a draft-16 session a varint-valued property is framed by the session's own Key-Value-Pair encoding, so only the mapping's integers stay as they are.",
               "createdAt": "2026-10-25T17:37:31Z",
               "updatedAt": "2026-10-25T17:37:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVNN2Kw",
+          "commit": {
+            "abbreviatedOid": "516ef16"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-30T20:12:42Z",
+          "updatedAt": "2026-10-30T20:12:42Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVS_j1Q",
+          "commit": {
+            "abbreviatedOid": "516ef16"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-31T17:57:49Z",
+          "updatedAt": "2026-10-31T17:57:49Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "PR_kwDOU6xPE88AAAABL2ZivQ",
+      "title": "Cite TEMPO in Relationship to Other Specifications",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/14",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #9",
+      "createdAt": "2026-10-30T19:50:49Z",
+      "updatedAt": "2026-10-31T12:56:50Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "9f67ec744f103d2ce8afb6e07e47430f155376e4",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "cite-tempo",
+      "headRefOid": "3ce6a33ed1db3ae92aaacc271f1344f353164d11",
+      "closedAt": "2026-10-31T12:56:46Z",
+      "mergedAt": "2026-10-31T12:56:46Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "5dd504c74b00c455215aff6ebb923934e7687ee2"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 15,
+      "id": "PR_kwDOU6xPE88AAAABL2Z6Pg",
+      "title": "Clarify when a receiver knows a Track's Properties",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/15",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Objects can arrive before the message that establishes their Track Alias, so say that a receiver uses the Track Properties from that message instead of claiming they always arrive first.\n\nFixes #8",
+      "createdAt": "2026-10-30T19:51:21Z",
+      "updatedAt": "2026-10-31T15:29:08Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "9f67ec744f103d2ce8afb6e07e47430f155376e4",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "clarify-track-properties",
+      "headRefOid": "0490b70925d0c718d323ea90b08eac9ab34d8008",
+      "closedAt": "2026-10-31T15:29:03Z",
+      "mergedAt": "2026-10-31T15:29:03Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "34857035479583e847af8c40c7adedd893c37b08"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVR8pcg",
+          "commit": {
+            "abbreviatedOid": "0490b70"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-31T14:01:39Z",
+          "updatedAt": "2026-10-31T14:01:39Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "PR_kwDOU6xPE88AAAABL2d7LA",
+      "title": "Allow TIMESTAMP_ORIGIN on POSIX-time Tracks",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/16",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Since #4, omitting CLOCK_ID places a Track on POSIX time, so the rule that TIMESTAMP_ORIGIN requires CLOCK_ID left wall-clock Tracks unable to use an origin and forced every Object to carry a full epoch timestamp. Drop the rule, and update Security Considerations, which still assumed omitting CLOCK_ID hid the timeline's placement.\n\nFixes #13",
+      "createdAt": "2026-10-30T19:57:22Z",
+      "updatedAt": "2026-10-31T12:57:18Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "9f67ec744f103d2ce8afb6e07e47430f155376e4",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "origin-on-posix-clock",
+      "headRefOid": "b0e308f80d167a63c70e8c02a4065b68b3948d98",
+      "closedAt": "2026-10-31T12:55:28Z",
+      "mergedAt": "2026-10-31T12:55:28Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "45f2b451af3327ea03e76c93e979376ecf97a2f1"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVQQVUA",
+          "commit": {
+            "abbreviatedOid": "b0e308f"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-31T04:41:32Z",
+          "updatedAt": "2026-10-31T04:41:32Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "PR_kwDOU6xPE88AAAABL2etZQ",
+      "title": "Remove CLOCK_ID text left over from before #4",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/17",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Since #4, an absent CLOCK_ID means POSIX time and any present value is a shared clock unrelated to wall-clock time.\n\n- Drop \"non-zero\" from the CLOCK_ID definition; 0 is an ordinary value.\n- Fix the IANA entry, which still said 0 meant wall-clock time.\n- Remove CLOCK_ID = 0 from the wall-clock examples.\n- Drop the on-demand option of omitting CLOCK_ID and TIMESTAMP_ORIGIN, which now places content at 1970; keep the shared Clock ID option.\n\nFixes #12",
+      "createdAt": "2026-10-30T19:58:32Z",
+      "updatedAt": "2026-10-31T12:57:12Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "origin-on-posix-clock",
+      "baseRefOid": "b0e308f80d167a63c70e8c02a4065b68b3948d98",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "clock-id-cleanup",
+      "headRefOid": "c1857989bd12ba9dc85c07e0b87c1276c42f2436",
+      "closedAt": "2026-10-31T12:55:29Z",
+      "mergedAt": "2026-10-31T12:55:29Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "27e3bb941d82ca2fa38e08f2ca69dcbcc4b987da"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVQP5bw",
+          "commit": {
+            "abbreviatedOid": "c185798"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-31T04:39:55Z",
+          "updatedAt": "2026-10-31T04:39:55Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOU6xPE88AAAABL2jfTA",
+      "title": "Define CLOCK_ID 1 as TAI and reserve 0-63",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/19",
+      "state": "MERGED",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Reserve CLOCK_ID values 0 through 63 for clocks listed in a new \"MOQ Clock IDs\" IANA registry (Specification Required), and register 1 as International Atomic Time measured from 1970-01-01T00:00:00 TAI, so Tracks such as MPEG-2 TS emission times can carry a continuous time scale without leap seconds.\n\nFixes #10",
+      "createdAt": "2026-10-30T20:05:52Z",
+      "updatedAt": "2026-10-31T12:57:06Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "clock-id-cleanup",
+      "baseRefOid": "c1857989bd12ba9dc85c07e0b87c1276c42f2436",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "tai-clock-id",
+      "headRefOid": "8d99e38724daf100eb0d4ce5470b7bd76734e285",
+      "closedAt": "2026-10-31T12:55:30Z",
+      "mergedAt": "2026-10-31T12:55:30Z",
+      "mergedBy": "afrind",
+      "mergeCommit": {
+        "oid": "9d3372ca16abc31bb6fac7f5d325388eaa7a6bc5"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVQPLfA",
+          "commit": {
+            "abbreviatedOid": "8d99e38"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-31T04:37:28Z",
+          "updatedAt": "2026-10-31T04:37:28Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOU6xPE88AAAABL2l2mQ",
+      "title": "Define CLOCK_ID 0 as a Track-private clock",
+      "url": "https://github.com/afrind/draft-frindell-moq-timestamp/pull/20",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Register CLOCK_ID 0 in the MOQ Clock IDs registry for a clock private to the Track, whose timestamps are comparable only within that Track, even with other Tracks that also carry 0.  This restores the private timeline #4 removed, without letting other Tracks reuse it.\n\nFixes #6",
+      "createdAt": "2026-10-30T20:09:30Z",
+      "updatedAt": "2026-11-01T02:06:59Z",
+      "baseRepository": "afrind/draft-frindell-moq-timestamp",
+      "baseRefName": "main",
+      "baseRefOid": "9d3372ca16abc31bb6fac7f5d325388eaa7a6bc5",
+      "headRepository": "afrind/draft-frindell-moq-timestamp",
+      "headRefName": "private-clock-id",
+      "headRefOid": "316d611bd5e2478d6027834bdbd9ee17e933e7bf",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVQNtOg",
+          "commit": {
+            "abbreviatedOid": "66958f0"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Looks good, do we need a Namespace scoped clock as well? Or is that just easy enough to accomplish with clock IDs above 63?",
+          "createdAt": "2026-10-31T04:32:18Z",
+          "updatedAt": "2026-10-31T04:35:28Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Do we really want it to be Track scoped?  If so, wouldn't we want one that's Namespace scoped as well?",
+              "createdAt": "2026-10-31T04:32:18Z",
+              "updatedAt": "2026-10-31T04:35:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVRrKzQ",
+          "commit": {
+            "abbreviatedOid": "66958f0"
+          },
+          "author": "afrind",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-31T12:54:45Z",
+          "updatedAt": "2026-10-31T12:54:46Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Maybe we need to think about this one and shouldn't ship it for -01?",
+              "createdAt": "2026-10-31T12:54:46Z",
+              "updatedAt": "2026-10-31T12:54:46Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVR-I3g",
+          "commit": {
+            "abbreviatedOid": "316d611"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Happy to merge this now and we can think about whether namespace names sense",
+          "createdAt": "2026-10-31T14:05:09Z",
+          "updatedAt": "2026-10-31T14:05:09Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOU6xPE88AAAABVUt7eg",
+          "commit": {
+            "abbreviatedOid": "66958f0"
+          },
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T02:06:59Z",
+          "updatedAt": "2026-11-01T02:06:59Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "I filed #22 for this question",
+              "createdAt": "2026-11-01T02:06:59Z",
+              "updatedAt": "2026-11-01T02:06:59Z"
             }
           ]
         }
