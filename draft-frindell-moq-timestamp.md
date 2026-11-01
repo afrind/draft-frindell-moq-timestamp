@@ -169,6 +169,10 @@ is placed:
   IDs" registry ({{clock-id-registry}}).  A receiver treats a reserved value it
   does not recognize as a clock with no known relationship to wall-clock time.
 
+* A CLOCK_ID of 0 identifies a clock private to the Track.  Its timestamps can
+  be compared with each other, but not with those of any other Track, including
+  other Tracks that carry a CLOCK_ID of 0.
+
 * A CLOCK_ID of 1 identifies International Atomic Time (TAI), a continuous time
   scale with no leap seconds, measured in TIMESCALE ticks since
   1970-01-01T00:00:00 TAI.
@@ -331,11 +335,12 @@ The value is a variable-length integer giving ticks per second.
 |-----:|:-----|:------|:--------------|
 | 0x3E8D2B70 | CLOCK_ID | Track | This document, {{clock-id}} |
 
-The value is a variable-length integer identifying the Track's clock: 1
-identifies TAI, other values from 0 to 63 are reserved for clocks listed in the
-"MOQ Clock IDs" registry ({{clock-id-registry}}), and values above 63 identify
-shared clocks with no defined relationship to wall-clock time.  A Track without
-CLOCK_ID uses POSIX time.
+The value is a variable-length integer identifying the Track's clock: 0
+identifies a Track-private clock, 1 identifies TAI, other values from 2 to 63
+are reserved for clocks listed in the "MOQ Clock IDs" registry
+({{clock-id-registry}}), and values above 63 identify shared clocks with no
+defined relationship to wall-clock time.  A Track without CLOCK_ID uses POSIX
+time.
 
 ## TIMESTAMP_ORIGIN Property
 
@@ -377,7 +382,7 @@ The initial contents of the registry are:
 
 | Value | Clock | Specification |
 |------:|:------|:--------------|
-| 0 | Unassigned | |
+| 0 | Private to the Track | This document, {{clock-id}} |
 | 1 | International Atomic Time (TAI) | This document, {{clock-id}} |
 | 2-63 | Unassigned | |
 
@@ -390,11 +395,12 @@ misbehaving publisher can send misleading values.
 
 Timestamps and the Timestamp Origin can reveal information about the publisher's
 clock and the temporal structure of its content.  Where this is sensitive, a
-publisher MAY place its timeline on a shared clock ({{clock-id}}) rather than
-POSIX time, use a coarser Timescale, or omit these Properties.  An end-to-end
-encrypted payload can carry timing that is hidden from Relays, but when a
-Timestamp Mapping is in use, Group IDs and Object IDs reveal timing regardless.
-See {{MOQT}} for general considerations on logging untrusted Property values.
+publisher MAY place its timeline on a private or shared clock ({{clock-id}})
+rather than POSIX time, use a coarser Timescale, or omit these Properties.  An
+end-to-end encrypted payload can carry timing that is hidden from Relays, but
+when a Timestamp Mapping is in use, Group IDs and Object IDs reveal timing
+regardless.  See {{MOQT}} for general considerations on logging untrusted
+Property values.
 
 --- back
 
